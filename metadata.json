@@ -1,0 +1,5 @@
+{
+  "name": "GRIDLOCK — Smart City Deadlock Visualizer",
+  "description": "An interactive tool to visualize Operating Systems deadlock concepts (Mutual Exclusion, Hold and Wait, No Preemption, Circular Wait) in a futuristic Smart City simulation.",
+  "requestFramePermissions": []
+}

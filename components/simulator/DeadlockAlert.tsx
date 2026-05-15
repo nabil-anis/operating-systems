@@ -18,40 +18,40 @@ const DeadlockAlert: React.FC<DeadlockAlertProps> = ({ isVisible, onTerminate, o
           initial={{ y: -100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -100, opacity: 0 }}
-          className="fixed top-20 inset-x-0 z-[110] px-6"
+          className="fixed top-28 inset-x-0 z-[110] px-6"
         >
-          <div className="max-w-4xl mx-auto bg-danger/90 backdrop-blur-xl border border-red-500/50 rounded-xl p-4 shadow-[0_0_50px_rgba(255,68,68,0.3)] flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center animate-pulse">
-                <ZapOff className="text-white w-6 h-6" />
+          <div className="max-w-5xl mx-auto bg-secondary/20 backdrop-blur-3xl border border-secondary/50 rounded-[32px] p-8 shadow-[0_0_80px_rgba(244,63,94,0.4)] flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="flex items-center gap-6">
+              <div className="w-16 h-16 bg-secondary/20 rounded-[20px] flex items-center justify-center animate-pulse border border-secondary/30">
+                <ZapOff className="text-secondary w-8 h-8 drop-shadow-[0_0_10px_#f43f5e]" />
               </div>
               <div>
-                <h3 className="font-heading font-bold text-white text-lg leading-tight">TOTAL BLACKOUT IMMINENT</h3>
-                <p className="text-white/80 text-xs font-mono uppercase tracking-widest">Deadlock detected in city grid — circular wait confirmed</p>
+                <h3 className="font-display font-black text-white text-3xl uppercase tracking-tighter italic leading-none">Total System Gridlock</h3>
+                <p className="text-white/80 text-[11px] font-mono uppercase tracking-[0.3em] font-black italic mt-3">Circular wait confirmed // Kernel intervention required</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-4 flex-wrap justify-center">
               <button 
                 onClick={onTerminate}
-                className="px-4 py-2 bg-black/40 hover:bg-black/60 text-white rounded-lg text-xs font-heading font-semibold flex items-center gap-2 transition-all"
+                className="px-8 py-4 bg-black/60 hover:bg-black/80 text-white rounded-[20px] text-[11px] font-mono font-black uppercase tracking-widest flex items-center gap-3 transition-all border border-white/10 italic"
               >
-                <Terminal className="w-4 h-4" />
-                Terminate Process
+                <Terminal className="w-5 h-5 text-secondary" />
+                Kill Process
               </button>
               <button 
                 onClick={onPreempt}
-                className="px-4 py-2 bg-black/40 hover:bg-black/60 text-white rounded-lg text-xs font-heading font-semibold flex items-center gap-2 transition-all"
+                className="px-8 py-4 bg-black/60 hover:bg-black/80 text-white rounded-[20px] text-[11px] font-mono font-black uppercase tracking-widest flex items-center gap-3 transition-all border border-white/10 italic"
               >
-                <AlertCircle className="w-4 h-4" />
-                Preempt Resource
+                <AlertCircle className="w-5 h-5 text-secondary" />
+                Preempt
               </button>
               <button 
                 onClick={onRestart}
-                className="px-4 py-2 bg-white text-danger rounded-lg text-xs font-heading font-bold flex items-center gap-2 transition-all hover:scale-105"
+                className="px-10 py-5 bg-white text-secondary rounded-[24px] text-[12px] font-display font-black uppercase tracking-widest flex items-center gap-3 transition-all hover:scale-105 italic shadow-2xl"
               >
-                <RefreshCw className="w-4 h-4" />
-                Restart
+                <RefreshCw className="w-5 h-5" />
+                Reboot Grid
               </button>
             </div>
           </div>

@@ -29,7 +29,7 @@ const Home: React.FC = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <div className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/5 border border-white/10 text-primary font-mono text-[10px] font-black tracking-[0.3em] uppercase mb-10 backdrop-blur-xl">
+              <div className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/10 border border-white/20 text-primary font-mono text-[11px] font-black tracking-[0.3em] uppercase mb-10 backdrop-blur-xl">
                 <span className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_10px_#FF6700]" />
                 HyperOS Core // V.3.0
               </div>
@@ -37,7 +37,7 @@ const Home: React.FC = () => {
                 Grid <br/>
                 <span className="text-primary not-italic drop-shadow-[0_0_40px_rgba(255,103,0,0.3)]">Lock</span>
               </h1>
-              <p className="text-2xl text-slate-400 font-light leading-relaxed mb-12 max-w-lg font-sans italic opacity-80">
+              <p className="text-2xl text-slate-200 font-light leading-relaxed mb-12 max-w-lg font-sans italic opacity-90">
                 The definitive topography for analyzing kernel contention and deadlock dynamics.
               </p>
               <div className="flex flex-wrap gap-6">
@@ -70,7 +70,7 @@ const Home: React.FC = () => {
                            <ShieldAlert className="w-24 h-24 text-primary" />
                         </motion.div>
                         <div className="font-display font-black text-5xl text-white uppercase tracking-[0.1em] italic">Safe State</div>
-                        <div className="font-mono text-[10px] text-primary font-black uppercase mt-6 tracking-[0.5em]">Kernel Monitoring Active</div>
+                        <div className="font-mono text-[11px] text-primary font-black uppercase mt-6 tracking-[0.5em] opacity-80">Kernel Monitoring Active</div>
                      </div>
                      {/* Decorative Elements */}
                      <div className="absolute top-16 right-16 w-4 h-4 bg-primary rounded-full shadow-[0_0_25px_#FF6700]" />
@@ -114,8 +114,8 @@ const Home: React.FC = () => {
                   <f.icon className={`w-10 h-10 ${f.color}`} />
                 </div>
                 <h3 className="text-4xl font-display font-black text-white uppercase mb-6 tracking-widest italic">{f.title}</h3>
-                <p className="text-slate-400 text-xl font-light leading-relaxed">{f.desc}</p>
-                <div className="mt-10 pt-10 border-t border-white/10 flex items-center gap-3 text-primary font-mono text-[11px] font-black uppercase tracking-[0.3em] opacity-0 group-hover:opacity-100 transition-all translate-y-4 group-hover:translate-y-0">
+                <p className="text-slate-200 text-xl font-light leading-relaxed opacity-90">{f.desc}</p>
+                <div className="mt-10 pt-10 border-t border-white/10 flex items-center gap-3 text-primary font-mono text-[12px] font-black uppercase tracking-[0.3em] opacity-0 group-hover:opacity-100 transition-all translate-y-4 group-hover:translate-y-0">
                   Initialize <ArrowRight className="w-4 h-4" />
                 </div>
               </motion.div>

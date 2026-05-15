@@ -20,27 +20,27 @@ const SystemLog: React.FC<SystemLogProps> = ({ logs }) => {
     <div className="glass-panel p-4 h-64 flex flex-col gap-2 relative overflow-hidden bg-black/80">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-          <span className="font-mono text-[10px] text-primary uppercase tracking-widest">System Monitor</span>
+          <div className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_#00f5ff]" />
+          <span className="font-mono text-[12px] text-primary uppercase tracking-widest font-black italic">System Monitor</span>
         </div>
-        <span className="font-mono text-[10px] text-slate-500 uppercase">Live Output</span>
+        <span className="font-mono text-[12px] text-slate-300 uppercase font-bold italic opacity-60">Live Output</span>
       </div>
       
       <div 
         ref={scrollRef}
-        className="flex-grow overflow-y-auto font-mono text-[11px] space-y-1 custom-scrollbar"
+        className="flex-grow overflow-y-auto font-mono text-[13px] space-y-2 custom-scrollbar"
       >
         {logs.length === 0 && (
-          <div className="text-slate-600 italic">Initialize simulation to see logs...</div>
+          <div className="text-slate-500 italic font-medium">Initialize simulation to see logs...</div>
         )}
         {logs.map((log) => (
           <motion.div
             key={log.id}
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex gap-3"
+            className="flex gap-3 items-center"
           >
-            <span className="text-slate-600 whitespace-nowrap">[{log.timestamp}]</span>
+            <span className="text-slate-400 whitespace-nowrap font-bold opacity-80">[{log.timestamp}]</span>
             <span className={
               log.type === 'error' ? 'text-danger' : 
               log.type === 'warning' ? 'text-yellow-400' : 

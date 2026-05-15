@@ -155,9 +155,9 @@ const CityMap: React.FC<CityMapProps> = ({ nodes, edges, isDeadlocked }) => {
 
               {/* Label */}
               <text
-                x={node.x} y={node.y + 45}
+                x={node.x} y={node.y + 50}
                 textAnchor="middle"
-                className={`font-mono text-[9px] uppercase tracking-widest pointer-events-none ${isDead ? 'fill-danger' : isWaiting ? 'fill-yellow-500' : isRunning ? 'fill-primary' : 'fill-slate-400 opacity-60'}`}
+                className={`font-mono text-[11px] font-black uppercase tracking-widest pointer-events-none ${isDead ? 'fill-danger' : isWaiting ? 'fill-yellow-500' : isRunning ? 'fill-primary' : 'fill-slate-200'}`}
               >
                 {node.id}: {node.label}
               </text>

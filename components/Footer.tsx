@@ -18,14 +18,14 @@ const Footer: React.FC = () => {
                 Grid<span className="text-primary not-italic">Lock</span>
               </span>
             </div>
-            <p className="text-slate-400 text-xl font-light leading-relaxed max-w-md italic opacity-80">
+            <p className="text-slate-200 text-xl font-light leading-relaxed max-w-md italic opacity-95">
               The definitive topography for analyzing kernel contention and deadlock dynamics.
               Built for the Smart City Gridlock Engine.
             </p>
           </div>
           
           <div className="space-y-8">
-            <h4 className="text-white font-black text-[11px] uppercase tracking-[0.4em] italic opacity-40">The Minds</h4>
+            <h4 className="text-white font-black text-[13px] uppercase tracking-[0.4em] italic opacity-80">The Minds</h4>
             <div className="space-y-4">
                <div className="text-white font-display font-black text-2xl uppercase tracking-widest italic leading-tight">Muhammad Nabeel</div>
                <div className="text-white font-display font-black text-2xl uppercase tracking-widest italic leading-tight">Usaid Owais</div>
@@ -33,8 +33,8 @@ const Footer: React.FC = () => {
           </div>
 
           <div className="space-y-8">
-            <h4 className="text-white font-black text-[11px] uppercase tracking-[0.4em] italic opacity-40">System Core</h4>
-            <div className="font-mono text-[10px] text-white/30 uppercase tracking-[0.5em] leading-loose italic font-black">
+            <h4 className="text-white font-black text-[13px] uppercase tracking-[0.4em] italic opacity-80">System Core</h4>
+            <div className="font-mono text-[12px] text-white/50 uppercase tracking-[0.5em] leading-loose italic font-black">
               HyperOS v4.0.2<br/>
               Distributed Node v7<br/>
               Safe State Kernel
@@ -42,13 +42,13 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row justify-between items-center gap-10 pt-20 border-t border-white/5">
-           <div className="text-slate-600 font-mono text-[9px] uppercase tracking-[0.5em] italic font-black">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-10 pt-20 border-t border-white/10">
+           <div className="text-slate-400 font-mono text-[12px] uppercase tracking-[0.5em] italic font-black">
              © 2026 GridLock Logic Kernel. All Rights Reserved.
            </div>
            <div className="flex gap-8">
               {['Twitter', 'Github', 'LinkedIn'].map(social => (
-                <a key={social} href="#" className="text-white/20 hover:text-primary transition-all font-mono text-[9px] font-black uppercase tracking-widest italic">{social}</a>
+                <a key={social} href="#" className="text-white/40 hover:text-primary transition-all font-mono text-[11px] font-black uppercase tracking-widest italic">{social}</a>
               ))}
            </div>
         </div>

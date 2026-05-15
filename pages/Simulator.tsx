@@ -205,17 +205,17 @@ const Simulator: React.FC = () => {
                 className="flex flex-col md:flex-row justify-between items-start md:items-center gap-10"
              >
                <div className="space-y-4">
-                  <div className="inline-flex items-center gap-4 px-5 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary font-mono text-[9px] font-black tracking-[0.4em] uppercase mb-2 italic opacity-60">
+                  <div className="inline-flex items-center gap-4 px-5 py-2 rounded-full bg-primary/10 border border-primary/30 text-primary font-mono text-[11px] font-black tracking-[0.4em] uppercase mb-2 italic opacity-80">
                     Diagnostic Lab // v4.Kernel
                   </div>
                   <h1 className="text-5xl md:text-7xl lg:text-9xl font-display font-black text-white tracking-tighter flex flex-wrap items-center gap-x-8 uppercase leading-none italic">
                     Grid
                     <span className="text-transparent border-text italic">Simulator</span>
                   </h1>
-                  <p className="text-slate-500 font-mono text-[10px] mt-4 tracking-[0.3em] uppercase font-black italic opacity-40">HyperOS v4.0.2 // SMART CITY GRIDLOCK ENGINE</p>
+                  <p className="text-slate-300 font-mono text-[12px] mt-4 tracking-[0.3em] uppercase font-black italic opacity-60">HyperOS v4.0.2 // SMART CITY GRIDLOCK ENGINE</p>
                </div>
                <div className="flex items-center gap-6 w-full md:w-auto mt-6 md:mt-0">
-                  <div className={`flex-grow md:flex-grow-0 px-8 py-5 lg:px-12 lg:py-8 rounded-[28px] lg:rounded-[40px] border flex items-center justify-center gap-6 text-[9px] lg:text-[11px] font-black uppercase tracking-[0.3em] italic transition-all duration-700 shadow-2xl ${isDeadlocked ? 'bg-secondary/10 border-secondary/50 text-secondary shadow-secondary/20 scale-105' : 'bg-primary/20 border-primary/50 text-primary shadow-primary/20'}`}>
+                  <div className={`flex-grow md:flex-grow-0 px-8 py-5 lg:px-12 lg:py-8 rounded-[28px] lg:rounded-[40px] border flex items-center justify-center gap-6 text-[11px] lg:text-[12px] font-black uppercase tracking-[0.3em] italic transition-all duration-700 shadow-2xl ${isDeadlocked ? 'bg-secondary/10 border-secondary/50 text-secondary shadow-secondary/20 scale-105' : 'bg-primary/20 border-primary/50 text-primary shadow-primary/20'}`}>
                     <div className={`w-3 h-3 lg:w-5 lg:h-5 rounded-full shadow-lg ${isDeadlocked ? 'bg-secondary animate-pulse shadow-secondary' : 'bg-primary shadow-primary'}`} />
                     {isDeadlocked ? 'Critical Breach' : 'System Healthy'}
                   </div>
@@ -234,14 +234,14 @@ const Simulator: React.FC = () => {
                         <Layout className="w-8 h-8 lg:w-10 lg:h-10 text-primary shadow-[0_0_15px_#FF6700]" />
                       </div>
                       <div>
-                        <span className="text-white font-black text-xs lg:text-sm uppercase tracking-[0.4em] block italic">Topology Hub</span>
-                        <span className="text-white/30 text-[10px] lg:text-[11px] uppercase font-black italic tracking-[0.2em] mt-2">Resource Allocation Graph // Real-time</span>
+                        <span className="text-white font-black text-sm lg:text-base uppercase tracking-[0.4em] block italic">Topology Hub</span>
+                        <span className="text-white/60 text-[11px] lg:text-[12px] uppercase font-black italic tracking-[0.2em] mt-2">Resource Allocation Graph // Real-time</span>
                       </div>
                    </div>
                    <div className="flex items-center gap-6">
                       <button 
                         onClick={() => setShowTheoreticalExp(!showTheoreticalExp)} 
-                        className={`text-[10px] font-black uppercase tracking-[0.5em] px-10 py-5 rounded-full border transition-all italic shadow-2xl ${showTheoreticalExp ? 'border-primary text-primary bg-primary/10' : 'border-white/10 text-white/30 hover:text-white hover:border-white/20'}`}
+                        className={`text-[11px] font-black uppercase tracking-[0.5em] px-10 py-5 rounded-full border transition-all italic shadow-2xl ${showTheoreticalExp ? 'border-primary text-primary bg-primary/10' : 'border-white/20 text-white/50 hover:text-white hover:border-white/40'}`}
                       >
                         {showTheoreticalExp ? 'Hide Insights' : 'Kernel Insights'}
                       </button>
@@ -261,22 +261,22 @@ const Simulator: React.FC = () => {
                       className="p-8 lg:p-12 rounded-[32px] lg:rounded-[48px] bg-black/80 backdrop-blur-3xl border border-white/10 shadow-3xl z-20 overflow-hidden"
                     >
                       <div className="flex flex-col sm:flex-row justify-between items-start mb-8 gap-4">
-                        <h4 className="text-primary text-[10px] font-black uppercase tracking-[0.5em] flex items-center gap-4 italic leading-none opacity-60">
+                        <h4 className="text-primary text-[11px] font-black uppercase tracking-[0.5em] flex items-center gap-4 italic leading-none opacity-80">
                           <Info className="w-5 h-5 shadow-[0_0_15px_#FF6700]" />
                           Kernel Strategy: {ALGO_EXPLAINERS[algorithm].title}
                         </h4>
-                        <div className="px-6 py-2 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-black text-primary uppercase tracking-[0.3em] italic">
+                        <div className="px-6 py-2 rounded-full bg-primary/10 border border-primary/20 text-[11px] font-black text-primary uppercase tracking-[0.3em] italic">
                           Mode: {ALGO_EXPLAINERS[algorithm].safety}
                         </div>
                       </div>
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-center">
-                        <p className="text-lg lg:text-xl text-white/90 font-black italic leading-tight tracking-tight uppercase border-l-[3px] border-primary/30 pl-6 lg:pl-10">
+                        <p className="text-xl lg:text-2xl text-white font-black italic leading-tight tracking-tight uppercase border-l-[4px] border-primary pl-6 lg:pl-10">
                           {ALGO_EXPLAINERS[algorithm].desc}
                         </p>
-                        <div className="bg-white/5 rounded-[24px] lg:rounded-[32px] p-6 lg:p-8 border border-white/10 shadow-inner">
-                           <div className="text-[10px] font-black text-primary/60 uppercase tracking-[0.5em] mb-4 italic">Live Cycle Analysis</div>
-                           <div className="text-white font-mono text-xs font-bold leading-relaxed min-h-[4em] opacity-80">
+                        <div className="bg-white/5 rounded-[24px] lg:rounded-[32px] p-6 lg:p-8 border border-white/20 shadow-inner">
+                           <div className="text-[11px] font-black text-primary/80 uppercase tracking-[0.5em] mb-4 italic">Live Cycle Analysis</div>
+                           <div className="text-white font-mono text-sm font-bold leading-relaxed min-h-[4em] opacity-90">
                              {algoStepInfo || 'AWAITING KERNEL_CYCLE EXECUTION...'}
                            </div>
                         </div>
@@ -299,17 +299,17 @@ const Simulator: React.FC = () => {
                     <Settings2 className="w-6 h-6 lg:w-8 lg:h-8 text-primary shadow-[0_0_15px_#FF6700]" />
                   </div>
                   <div>
-                    <h2 className="text-white font-black text-xs lg:text-sm uppercase tracking-[0.4em] italic opacity-60">Control Unit</h2>
-                    <p className="text-primary text-[9px] lg:text-[10px] font-mono font-black italic">KERNEL_SYS_v4</p>
+                    <h2 className="text-white font-black text-sm lg:text-base uppercase tracking-[0.4em] italic opacity-80">Control Unit</h2>
+                    <p className="text-primary text-[11px] lg:text-[12px] font-mono font-black italic">KERNEL_SYS_v4</p>
                   </div>
                 </div>
 
                  <div className="space-y-6 lg:space-y-8">
                     <div className="space-y-3 lg:space-y-4">
-                      <label className="text-[9px] lg:text-[10px] font-black text-white/30 uppercase tracking-[0.5em] ml-2 italic">Algorithm Strategy</label>
+                      <label className="text-[11px] lg:text-[12px] font-black text-white/60 uppercase tracking-[0.5em] ml-2 italic">Algorithm Strategy</label>
                       <div className="relative group">
                         <select 
-                           className="w-full bg-white/5 border border-white/10 rounded-[20px] lg:rounded-[28px] p-4 lg:p-6 text-[10px] lg:text-[11px] text-white font-black uppercase tracking-widest focus:border-primary transition-all appearance-none cursor-pointer italic"
+                           className="w-full bg-white/5 border border-white/20 rounded-[20px] lg:rounded-[28px] p-4 lg:p-6 text-[12px] lg:text-[13px] text-white font-black uppercase tracking-widest focus:border-primary transition-all appearance-none cursor-pointer italic"
                            value={algorithm}
                            onChange={(e) => {
                              setAlgorithm(e.target.value as AlgorithmType);
@@ -326,10 +326,10 @@ const Simulator: React.FC = () => {
                     </div>
 
                    <div className="space-y-3 lg:space-y-4">
-                      <label className="text-[9px] lg:text-[10px] font-black text-white/30 uppercase tracking-[0.5em] ml-2 italic">Scenario Selection</label>
+                      <label className="text-[11px] lg:text-[12px] font-black text-white/60 uppercase tracking-[0.5em] ml-2 italic">Scenario Selection</label>
                      <div className="relative group">
                        <select 
-                          className="w-full bg-white/5 border border-white/10 rounded-[20px] lg:rounded-[28px] p-4 lg:p-6 text-[10px] lg:text-[11px] text-white font-black uppercase tracking-widest focus:border-primary transition-all appearance-none cursor-pointer italic"
+                          className="w-full bg-white/5 border border-white/20 rounded-[20px] lg:rounded-[28px] p-4 lg:p-6 text-[12px] lg:text-[13px] text-white font-black uppercase tracking-widest focus:border-primary transition-all appearance-none cursor-pointer italic"
                           value={scenario}
                           onChange={(e) => {
                             setScenario(e.target.value as ScenarioPreset);
@@ -348,7 +348,7 @@ const Simulator: React.FC = () => {
                       <button 
                         onClick={() => setIsPlaying(!isPlaying)}
                         disabled={isDeadlocked}
-                        className={`flex-grow h-16 lg:h-20 rounded-[20px] lg:rounded-[32px] font-black text-[10px] lg:text-[11px] uppercase tracking-[0.4em] flex items-center justify-center gap-4 lg:gap-6 transition-all italic shadow-2xl ${
+                        className={`flex-grow h-16 lg:h-20 rounded-[20px] lg:rounded-[32px] font-black text-[12px] lg:text-[13px] uppercase tracking-[0.4em] flex items-center justify-center gap-4 lg:gap-6 transition-all italic shadow-2xl ${
                           isPlaying 
                           ? 'bg-secondary text-white shadow-secondary/20' 
                           : 'btn-primary'
@@ -386,17 +386,17 @@ const Simulator: React.FC = () => {
 
               <div className="pt-8 lg:pt-12 border-t border-white/10 space-y-6 lg:space-y-8">
                  <div className="flex justify-between items-center">
-                    <h3 className="text-[10px] lg:text-[11px] font-black text-white/30 uppercase tracking-[0.4em] flex items-center gap-4 italic leading-none">
-                       <TableIcon className="w-5 h-5 text-primary opacity-60" />
+                    <h3 className="text-[12px] lg:text-[13px] font-black text-white/60 uppercase tracking-[0.4em] flex items-center gap-4 italic leading-none">
+                       <TableIcon className="w-5 h-5 text-primary opacity-80" />
                        Grid Statistics
                     </h3>
                     <div className="w-2.5 h-2.5 rounded-full bg-primary shadow-[0_0_15px_#FF6700] animate-pulse" />
-                 </div>
-                 <div className="rounded-[24px] lg:rounded-[32px] overflow-hidden border border-white/10 bg-black/40 shadow-2xl">
-                    <div className="p-6 lg:p-8 overflow-x-auto">
-                      <table className="w-full text-left font-sans text-[10px] lg:text-[11px] min-w-[200px]">
+                  </div>
+                  <div className="rounded-[24px] lg:rounded-[32px] overflow-hidden border border-white/20 bg-black/60 shadow-2xl">
+                     <div className="p-6 lg:p-8 overflow-x-auto">
+                      <table className="w-full text-left font-sans text-xs lg:text-sm min-w-[200px]">
                         <thead>
-                          <tr className="text-white/30 uppercase font-black tracking-[0.4em] italic">
+                          <tr className="text-white/40 uppercase font-black tracking-[0.4em] italic">
                             <th className="pb-4 lg:pb-6">SYS_ID</th>
                             <th className="pb-4 lg:pb-6">HOLD</th>
                             <th className="pb-4 lg:pb-6">PEND</th>
@@ -407,44 +407,44 @@ const Simulator: React.FC = () => {
                             const held = edges.filter(e => e.to === pId && e.type === 'holds').map(e => e.from).join(',') || '-';
                             const req = edges.filter(e => e.from === pId && e.type === 'requests').map(e => e.to).join(',') || '-';
                             return (
-                              <tr key={pId} className="border-t border-white/5 hover:bg-white/5 transition-colors group">
-                                <td className="py-4 lg:py-5 text-primary tracking-widest">{pId}</td>
-                                <td className="py-4 lg:py-5 opacity-60 group-hover:opacity-100 transition-opacity">{held}</td>
-                                <td className="py-4 lg:py-5 text-secondary opacity-60 group-hover:opacity-100 transition-opacity">{req}</td>
+                              <tr key={pId} className="border-t border-white/5 hover:bg-white/10 transition-colors group">
+                                <td className="py-4 lg:py-5 text-primary tracking-widest text-base">{pId}</td>
+                                <td className="py-4 lg:py-5 opacity-80 group-hover:opacity-100 transition-opacity">{held}</td>
+                                <td className="py-4 lg:py-5 text-secondary opacity-80 group-hover:opacity-100 transition-opacity">{req}</td>
                               </tr>
                             );
                           })}
                         </tbody>
                       </table>
                     </div>
-                 </div>
+                  </div>
+                </div>
               </div>
             </div>
 
             <div className="hyper-card p-8 lg:p-12 bg-primary/5 border border-primary/20 rounded-[32px] lg:rounded-[48px] relative overflow-hidden group shadow-3xl shadow-primary/5">
                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none" />
-               <h4 className="text-[10px] lg:text-[11px] font-black text-primary uppercase tracking-[0.6em] mb-8 lg:mb-10 flex items-center gap-4 italic opacity-60">
+               <h4 className="text-[11px] lg:text-[12px] font-black text-primary uppercase tracking-[0.6em] mb-8 lg:mb-10 flex items-center gap-4 italic opacity-80">
                   <Cpu className="w-5 h-5 shadow-[0_0_15px_#FF6700]" />
                   Kernel Spec
                </h4>
-               <ul className="space-y-4 lg:space-y-6 text-xs lg:text-sm text-white/60 font-black italic relative z-10">
+               <ul className="space-y-4 lg:space-y-6 text-sm lg:text-base text-white/80 font-black italic relative z-10">
                   <li className="flex justify-between items-center border-b border-white/5 pb-4 tracking-tighter">
-                    <span className="text-white/30 uppercase text-[9px] lg:text-[10px] tracking-[0.3em]">Concurrency</span>
-                    <span className="text-white uppercase text-[11px] lg:text-sm">Active_Load</span>
+                    <span className="text-white/50 uppercase text-[11px] lg:text-[12px] tracking-[0.3em]">Concurrency</span>
+                    <span className="text-white uppercase text-[12px] lg:text-base">Active_Load</span>
                   </li>
                   <li className="flex justify-between items-center border-b border-white/5 pb-4 tracking-tighter">
-                    <span className="text-white/30 uppercase text-[9px] lg:text-[10px] tracking-[0.3em]">Preemption</span>
-                    <span className="text-secondary uppercase text-[11px] lg:text-sm">Surgical_Lock</span>
+                    <span className="text-white/50 uppercase text-[11px] lg:text-[12px] tracking-[0.3em]">Preemption</span>
+                    <span className="text-secondary uppercase text-[12px] lg:text-base">Surgical_Lock</span>
                   </li>
                   <li className="flex justify-between items-center tracking-tighter">
-                    <span className="text-white/30 uppercase text-[9px] lg:text-[10px] tracking-[0.3em]">Logic_Hub</span>
-                    <span className="text-white uppercase text-[11px] lg:text-sm">Hyper_OS_v4</span>
+                    <span className="text-white/50 uppercase text-[11px] lg:text-[12px] tracking-[0.3em]">Logic_Hub</span>
+                    <span className="text-white uppercase text-[12px] lg:text-base">Hyper_OS_v4</span>
                   </li>
                </ul>
             </div>
           </div>
         </div>
-      </div>
     </PageWrapper>
   );
 };

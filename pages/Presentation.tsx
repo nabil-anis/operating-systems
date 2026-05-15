@@ -47,14 +47,14 @@ const Presentation: React.FC = () => {
                  animate={{ opacity: 1, y: 0 }}
                  className="space-y-6 lg:space-y-10 max-w-5xl"
                >
-                 <div className="inline-flex items-center gap-4 px-6 py-2.5 rounded-full bg-primary/10 border border-primary/20 text-primary font-mono text-[10px] font-black uppercase tracking-[0.6em] italic opacity-60">
+                 <div className="inline-flex items-center gap-4 px-6 py-2.5 rounded-full bg-primary/10 border border-primary/20 text-primary font-mono text-[11px] font-black uppercase tracking-[0.6em] italic opacity-80">
                     Analytical Ledger // v4.Kernel
                  </div>
                  <h1 className="font-display font-black text-6xl md:text-8xl lg:text-[140px] text-white tracking-[-0.06em] uppercase leading-[0.8] italic break-words">
                    Systemic <br className="hidden md:block" /> 
                    <span className="text-transparent border-text block mt-4 lg:mt-8">Audit.Report</span>
                  </h1>
-                 <p className="text-slate-500 text-xl lg:text-3xl font-light leading-relaxed font-sans max-w-3xl border-l-[3px] border-primary/20 pl-8 lg:pl-12 italic opacity-80">
+                 <p className="text-slate-200 text-xl lg:text-3xl font-light leading-relaxed font-sans max-w-3xl border-l-[4px] border-primary pl-8 lg:pl-12 italic opacity-95">
                    Visualizing the systemic risks of resource contention in next-gen smart infrastructures 
                    through the lens of Operating System deadlock theory.
                  </p>
@@ -74,7 +74,7 @@ const Presentation: React.FC = () => {
                       <div className="flex flex-col md:flex-row items-center justify-between mb-12 lg:mb-16 gap-8">
                          <div>
                             <h3 className="text-white font-display font-black text-3xl lg:text-4xl uppercase tracking-tighter italic text-center md:text-left">Grid Matrix</h3>
-                            <p className="text-white/30 text-[10px] font-black uppercase tracking-[0.4em] italic mt-2 text-center md:text-left">Simulated vs Actual Collision Data</p>
+                            <p className="text-white/60 text-[11px] font-black uppercase tracking-[0.4em] italic mt-2 text-center md:text-left">Simulated vs Actual Collision Data</p>
                          </div>
                          <div className="flex gap-4">
                             <div className="w-12 h-1 bg-primary rounded-full shadow-[0_0_10px_#FF6700]" />
@@ -166,13 +166,13 @@ const Presentation: React.FC = () => {
                     <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
                        <div className="space-y-6 lg:space-y-8 max-w-2xl px-2">
                           <div className="flex items-center gap-4">
-                             <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
+                             <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center border border-primary/40">
                                <Globe className="text-primary w-5 h-5 shadow-[0_0_10px_#FF6700]" />
                              </div>
-                             <span className="text-primary font-mono text-[11px] font-black uppercase tracking-[0.6em] italic opacity-60">Future Strategy</span>
+                             <span className="text-primary font-mono text-[12px] font-black uppercase tracking-[0.6em] italic opacity-80">Future Strategy</span>
                           </div>
                           <h2 className="text-white font-display font-black text-4xl md:text-6xl uppercase tracking-tighter italic leading-none">Scalable Grid <br/> <span className="text-primary">Intelligence</span></h2>
-                          <p className="text-slate-500 text-lg lg:text-xl font-light italic leading-relaxed opacity-80">
+                          <p className="text-slate-200 text-lg lg:text-xl font-light italic leading-relaxed opacity-95">
                             The GRIDLOCK engine is designed to handle up to 4,096 concurrent resource nodes, 
                             mapping real-time IoT data into our safety verification logic.
                           </p>

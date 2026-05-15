@@ -1,6 +1,6 @@
 
 import React, { useRef } from 'react';
-import { motion, useScroll, useSpring } from 'framer-motion';
+import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 import { 
   FileText, 
   Users, 
@@ -40,7 +40,7 @@ const VisualizationPlaceholder = () => {
       <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-b from-black/80 to-transparent z-20 flex items-center justify-between px-12">
         <div className="flex items-center gap-4">
            <div className={`w-3 h-3 rounded-full animate-pulse shadow-[0_0_10px_#00f5ff] ${algos[activeAlgo].color === 'text-primary' ? 'bg-primary' : algos[activeAlgo].color === 'text-secondary' ? 'bg-secondary' : 'bg-accent'}`} />
-           <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.4em] italic font-mono">
+           <span className="text-[12px] font-black text-white/70 uppercase tracking-[0.4em] italic font-mono">
              CORE_ENGINE_STATE: <span className={algos[activeAlgo].color}>{algos[activeAlgo].title}</span>
            </span>
         </div>
@@ -137,9 +137,9 @@ const VisualizationPlaceholder = () => {
       </div>
 
       {/* Footer Monitor */}
-      <div className="absolute right-12 bottom-12 w-64 p-6 rounded-3xl bg-black/40 border border-white/10 backdrop-blur-xl z-20">
+      <div className="absolute right-12 bottom-12 w-64 p-6 rounded-3xl bg-black/60 border border-white/20 backdrop-blur-xl z-20">
          <div className="flex justify-between items-center mb-4">
-            <span className="text-[9px] font-black text-white/40 uppercase tracking-widest italic">{algos[activeAlgo].subtitle}</span>
+            <span className="text-[11px] font-black text-white/70 uppercase tracking-widest italic">{algos[activeAlgo].subtitle}</span>
             <div className={`w-2 h-2 rounded-full shadow-lg ${algos[activeAlgo].color === 'text-primary' ? 'bg-primary' : algos[activeAlgo].color === 'text-secondary' ? 'bg-secondary' : 'bg-accent'}`} />
          </div>
          <div className="space-y-2">
@@ -153,7 +153,7 @@ const VisualizationPlaceholder = () => {
       </div>
       
       <div className="absolute bottom-12 left-12 z-20">
-        <div className="flex items-center gap-4 px-8 py-3 rounded-full bg-primary/10 border border-primary/20 text-primary font-mono text-[9px] font-black uppercase tracking-[0.4em] italic opacity-60 backdrop-blur-md">
+        <div className="flex items-center gap-4 px-8 py-3 rounded-full bg-primary/10 border border-primary/30 text-primary font-mono text-[11px] font-black uppercase tracking-[0.4em] italic opacity-80 backdrop-blur-md">
            MODULE_BOOT: 0xHYPER_V4
         </div>
       </div>
@@ -178,13 +178,13 @@ const Section = ({ id, title, subtitle, icon: Icon, children, index }: any) => {
           <Icon className="text-primary w-8 h-8 lg:w-10 lg:h-10 group-hover:scale-110 transition-transform duration-500" />
         </div>
         <div>
-          <div className="text-primary font-mono text-[9px] lg:text-[10px] uppercase tracking-[0.5em] mb-3 lg:mb-4 font-black italic opacity-60">{subtitle}</div>
+          <div className="text-primary font-mono text-[12px] lg:text-[13px] uppercase tracking-[0.5em] mb-3 lg:mb-4 font-black italic opacity-80">{subtitle}</div>
           <h2 className="font-display font-black text-4xl md:text-7xl text-white tracking-tighter uppercase leading-none italic">{title}</h2>
         </div>
       </div>
 
-      <div className="hyper-card p-8 lg:p-20 bg-white/[0.02] border border-white/10 rounded-[40px] lg:rounded-[56px] shadow-3xl backdrop-blur-3xl">
-        <div className="prose prose-invert max-w-none text-slate-400 font-sans text-lg lg:text-xl leading-relaxed italic opacity-80">
+      <div className="hyper-card p-8 lg:p-20 bg-white/[0.04] border border-white/10 rounded-[40px] lg:rounded-[56px] shadow-3xl backdrop-blur-3xl">
+        <div className="prose prose-invert max-w-none text-slate-300 font-sans text-lg lg:text-xl leading-relaxed italic opacity-90">
           {children}
         </div>
       </div>
@@ -247,7 +247,7 @@ const Learn: React.FC = () => {
 
             <div className="flex flex-col md:flex-row gap-12 items-start mt-20">
                <div className="space-y-6 flex-grow">
-                 <p className="text-slate-500 text-2xl md:text-3xl font-light leading-relaxed font-sans italic opacity-80">
+                 <p className="text-slate-300 text-2xl md:text-3xl font-light leading-relaxed font-sans italic opacity-90">
                     A comprehensive investigation into Deadlock Management Systems within Smart City infrastructures.
                  </p>
                  <div className="flex items-center gap-6 pt-10">
@@ -256,7 +256,7 @@ const Learn: React.FC = () => {
                        <div className="w-14 h-14 rounded-full bg-secondary/20 border border-secondary/30 flex items-center justify-center font-black text-secondary italic text-xl">UO</div>
                     </div>
                     <div>
-                       <span className="text-white/40 text-[10px] font-black uppercase tracking-[0.4em] block italic">Research Lead</span>
+                       <span className="text-white/60 text-[11px] font-black uppercase tracking-[0.4em] block italic">Research Lead</span>
                        <span className="text-white text-lg font-black italic uppercase tracking-tighter">Muhammad Nabeel & Usaid Owais</span>
                     </div>
                  </div>
@@ -271,9 +271,9 @@ const Learn: React.FC = () => {
                { id: 'visualization', label: 'Topology', icon: Network },
                { id: 'conclusion', label: 'Outcome', icon: Shield }
              ].map((item, i) => (
-               <a key={i} href={`#${item.id}`} className="hyper-card p-6 lg:p-10 bg-white/[0.02] border border-white/10 rounded-[28px] lg:rounded-[32px] hover:border-primary/50 transition-all group backdrop-blur-3xl">
+               <a key={i} href={`#${item.id}`} className="hyper-card p-6 lg:p-10 bg-white/[0.03] border border-white/20 rounded-[28px] lg:rounded-[32px] hover:border-primary/50 transition-all group backdrop-blur-3xl">
                  <item.icon className="w-6 h-6 lg:w-8 lg:h-8 text-primary mb-4 lg:mb-6 group-hover:scale-125 transition-transform duration-500 shadow-2xl" />
-                 <div className="text-[10px] lg:text-[11px] font-black text-white uppercase tracking-[0.2em] lg:tracking-[0.3em] italic opacity-60 group-hover:opacity-100 transition-opacity">{item.label}</div>
+                 <div className="text-[12px] lg:text-[13px] font-black text-white uppercase tracking-[0.2em] lg:tracking-[0.3em] italic opacity-80 group-hover:opacity-100 transition-opacity">{item.label}</div>
                </a>
              ))}
           </div>
@@ -285,21 +285,21 @@ const Learn: React.FC = () => {
                  this application serves as a high-fidelity simulator for Deadlock Detection, Prevention, and Avoidance strategies.
                </p>
                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="p-8 rounded-[32px] bg-white/[0.03] border border-white/10">
-                     <h4 className="text-white font-black text-xs uppercase tracking-widest mb-4 italic flex items-center gap-3">
+                  <div className="p-8 rounded-[32px] bg-white/[0.04] border border-white/10">
+                     <h4 className="text-white font-black text-sm uppercase tracking-widest mb-4 italic flex items-center gap-3">
                        <Terminal className="w-5 h-5 text-primary" />
                        Core Objective
                      </h4>
-                     <p className="text-slate-400 text-sm leading-relaxed">
+                     <p className="text-slate-300 text-base leading-relaxed">
                        To bridge the gap between abstract OS theory and practical urban infrastructure management through interactive graph-based logic.
                      </p>
                   </div>
-                  <div className="p-8 rounded-[32px] bg-white/[0.03] border border-white/10">
-                     <h4 className="text-white font-black text-xs uppercase tracking-widest mb-4 italic flex items-center gap-3">
+                  <div className="p-8 rounded-[32px] bg-white/[0.04] border border-white/10">
+                     <h4 className="text-white font-black text-sm uppercase tracking-widest mb-4 italic flex items-center gap-3">
                        <Grid3X3 className="w-5 h-5 text-secondary" />
                        Systems Scope
                      </h4>
-                     <p className="text-slate-400 text-sm leading-relaxed">
+                     <p className="text-slate-300 text-base leading-relaxed">
                        Implementing Banker's Algorithm, Resource Allocation Graphs, and Total Ordering hierarchies in a real-time environment.
                      </p>
                   </div>
@@ -350,16 +350,16 @@ const Learn: React.FC = () => {
 
           <Section id="conclusion" title="Outcome" subtitle="04. Evaluation" icon={Shield} index={3}>
              <div className="space-y-8">
-               <p className="text-2xl text-white/90 font-black italic leading-tight tracking-tight uppercase border-l-[3px] border-primary/30 pl-10">
+               <p className="text-2xl text-white font-black italic leading-tight tracking-tight uppercase border-l-[4px] border-primary pl-10">
                  The Case Study confirms that while Detection is cost-effective, Avoidance (Banker's) provides the highest systemic reliability for critical urban services.
                </p>
-               <div className="p-10 rounded-[40px] bg-white/[0.02] border border-white/10 space-y-6">
+               <div className="p-10 rounded-[40px] bg-white/[0.03] border border-white/20 space-y-6">
                  <div className="flex justify-between items-center bg-white/5 p-6 rounded-2xl">
-                    <span className="text-white/40 text-[10px] font-black uppercase tracking-[0.4em] italic font-mono">Stability_Score</span>
+                    <span className="text-white/60 text-[12px] font-black uppercase tracking-[0.4em] italic font-mono">Stability_Score</span>
                     <span className="text-primary font-black text-2xl italic tracking-tighter">99.8%</span>
                  </div>
                  <div className="flex justify-between items-center bg-white/5 p-6 rounded-2xl">
-                    <span className="text-white/40 text-[10px] font-black uppercase tracking-[0.4em] italic font-mono">Logic_Execution</span>
+                    <span className="text-white/60 text-[12px] font-black uppercase tracking-[0.4em] italic font-mono">Logic_Execution</span>
                     <span className="text-secondary font-black text-2xl italic tracking-tighter">OMNICHANNEL</span>
                  </div>
                </div>

@@ -23,26 +23,26 @@ import PageWrapper from '../components/PageWrapper';
 
 const PreventionTab = () => (
   <motion.div 
-    initial={{ opacity: 0, scale: 0.95 }}
-    animate={{ opacity: 1, scale: 1 }}
+    initial={{ opacity: 0, scale: 0.98, y: 10 }}
+    animate={{ opacity: 1, scale: 1, y: 0 }}
     className="space-y-12"
   >
-    <div className="hyper-card p-12 bg-white/[0.02]">
-      <div className="flex items-center gap-8 mb-12">
-        <div className="w-20 h-20 rounded-[32px] bg-primary/10 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10">
-          <ShieldCheck className="text-primary w-10 h-10" />
+    <div className="bg-white/[0.02] border border-white/10 rounded-[48px] p-10 lg:p-14 backdrop-blur-3xl shadow-xl">
+      <div className="flex items-center gap-6 mb-12">
+        <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20 shadow-lg">
+          <ShieldCheck className="text-primary w-8 h-8" />
         </div>
         <div>
-          <h3 className="font-display font-black text-5xl text-white tracking-[0.1em] uppercase italic leading-none">Prevention</h3>
-          <p className="text-white/40 font-mono text-[11px] uppercase tracking-[0.5em] mt-4 font-black">Protocol Layer 0 // Pre-Execution</p>
+          <h3 className="font-sans font-bold text-4xl text-white tracking-tight leading-none">Prevention</h3>
+          <p className="text-white/40 font-sans text-xs font-bold uppercase tracking-widest mt-2">Protocol Layer 0 // Pre-Execution</p>
         </div>
       </div>
       
-      <p className="text-3xl text-slate-400 font-light leading-relaxed mb-20 max-w-4xl border-l-[6px] border-primary pl-10 italic opacity-80">
+      <p className="text-2xl text-slate-400 font-medium leading-relaxed mb-16 max-w-3xl border-l-[3px] border-primary pl-8 lg:pl-10">
         "Eliminate system contention by architecting immunity into the core protocol logic."
       </p>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {[
           { 
             cond: 'Mutual Exclusion', 
@@ -52,7 +52,7 @@ const PreventionTab = () => (
           },
           { 
             cond: 'Hold and Wait', 
-            fix: 'Total Pre-allocation', 
+            fix: 'Pre-allocation', 
             desc: 'Transaction isolation: claim all vectors before execution begins.',
             impact: 'Complexity: Critical'
           },
@@ -71,14 +71,14 @@ const PreventionTab = () => (
         ].map((item, i) => (
           <motion.div 
             key={i}
-            className="hyper-card hyper-card-hover p-10 bg-white/[0.03] border border-white/10 rounded-[40px]"
+            className="p-8 bg-white/[0.03] border border-white/10 rounded-[32px] hover:bg-white/[0.05] transition-all"
           >
-            <div className="flex justify-between items-start mb-8">
-              <h4 className="text-primary font-mono font-black text-[10px] tracking-[0.4em] uppercase opacity-60">{item.cond}</h4>
-              <div className="text-[10px] font-mono text-white/40 border border-white/10 px-4 py-1.5 rounded-full uppercase tracking-widest bg-white/5 font-black">{item.impact}</div>
+            <div className="flex justify-between items-start mb-6">
+              <h4 className="text-primary font-bold text-[10px] tracking-widest uppercase opacity-60">{item.cond}</h4>
+              <div className="text-[10px] font-bold text-white/30 border border-white/10 px-3 py-1 rounded-full uppercase tracking-wider bg-white/5">{item.impact}</div>
             </div>
-            <p className="text-white text-3xl font-black mb-6 uppercase tracking-widest italic font-display">{item.fix}</p>
-            <p className="text-slate-500 text-lg leading-relaxed font-medium">{item.desc}</p>
+            <p className="text-white text-3xl font-bold mb-4 tracking-tight">{item.fix}</p>
+            <p className="text-slate-500 text-base leading-relaxed font-medium">{item.desc}</p>
           </motion.div>
         ))}
       </div>
@@ -339,12 +339,12 @@ const DetectionFix: React.FC = () => {
             <motion.div 
                initial={{ opacity: 0, y: -20 }}
                animate={{ opacity: 1, y: 0 }}
-               className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary font-mono text-[10px] font-black tracking-widest uppercase mb-4"
+               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary font-sans text-[10px] font-bold tracking-widest uppercase mb-4"
             >
               Diagnostic Tool // V.RAG
             </motion.div>
-            <h1 className="font-display font-black text-8xl md:text-9xl text-white mb-8 tracking-tighter uppercase leading-[0.8]">RAG <span className="text-primary italic">Analysis</span></h1>
-            <p className="text-2xl text-slate-400 font-light max-w-3xl mx-auto leading-relaxed">
+            <h1 className="font-sans font-bold text-7xl md:text-9xl text-white mb-8 tracking-tight leading-[1.05]">RAG Analysis</h1>
+            <p className="text-2xl text-slate-400 font-medium max-w-3xl mx-auto leading-relaxed">
               Resource Allocation Graphs provide the formal topography for modeling kernel state 
               and detecting sub-cycle dependencies.
             </p>
@@ -352,39 +352,39 @@ const DetectionFix: React.FC = () => {
 
           <div className="grid lg:grid-cols-12 gap-10">
             <div className="lg:col-span-4 flex flex-col gap-10">
-              <div className="hyper-card p-10 flex flex-col gap-10 bg-white/[0.02]">
+              <div className="bg-white/[0.02] border border-white/10 rounded-[32px] p-8 lg:p-10 flex flex-col gap-8 backdrop-blur-2xl">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-white font-black text-[10px] uppercase tracking-[0.4em] italic opacity-60">Kernel Node Controls</h3>
+                  <h3 className="text-white/40 font-bold text-[10px] uppercase tracking-widest">Kernel Node Controls</h3>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <button 
                     onClick={() => addNode('P')}
-                    className="hyper-card p-10 flex flex-col items-center gap-6 bg-white/[0.03] border border-white/10 hover:border-primary/60 group transition-all rounded-[32px]"
+                    className="p-8 flex flex-col items-center gap-4 bg-white/5 border border-white/5 hover:border-primary/40 group transition-all rounded-[24px]"
                   >
-                    <Plus className="w-8 h-8 text-primary group-hover:scale-125 group-hover:rotate-90 transition-transform duration-500" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.3em] italic">System (P)</span>
+                    <Plus className="w-6 h-6 text-primary group-hover:scale-110 transition-transform" />
+                    <span className="text-[10px] font-bold uppercase tracking-widest">System (P)</span>
                   </button>
                   <button 
                     onClick={() => addNode('R')}
-                    className="hyper-card p-10 flex flex-col items-center gap-6 bg-white/[0.03] border border-white/10 hover:border-white/40 group transition-all rounded-[32px]"
+                    className="p-8 flex flex-col items-center gap-4 bg-white/5 border border-white/5 hover:border-white/20 group transition-all rounded-[24px]"
                   >
-                    <Plus className="w-8 h-8 text-white group-hover:scale-125 group-hover:rotate-90 transition-transform duration-500" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.3em] italic">Grid (R)</span>
+                    <Plus className="w-6 h-6 text-white group-hover:scale-110 transition-transform" />
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Grid (R)</span>
                   </button>
                 </div>
 
-                <div className="space-y-8 pt-12 border-t border-white/[0.08]">
-                   <span className="text-[9px] font-black uppercase tracking-[0.5em] text-white/30 italic">Link Vector Hub</span>
+                <div className="space-y-6 pt-10 border-t border-white/5">
+                   <span className="text-[9px] font-bold uppercase tracking-widest text-white/30">Link Vector Hub</span>
                    <div className="flex gap-4">
                     <input 
                       id="edge-from" placeholder="SRC" 
-                      className="bg-white/5 border border-white/10 rounded-[24px] p-6 text-sm w-full outline-none focus:border-primary/50 font-mono text-center text-white focus:bg-white/10 transition-all uppercase placeholder:text-white/20"
+                      className="bg-white/5 border border-white/10 rounded-2xl p-4 text-sm w-full outline-none focus:border-primary/50 font-mono text-center text-white focus:bg-white/10 transition-all uppercase placeholder:text-white/20"
                     />
-                    <div className="flex items-center text-primary font-black italic">→</div>
+                    <div className="flex items-center text-primary font-bold">→</div>
                     <input 
                       id="edge-to" placeholder="DST" 
-                      className="bg-white/5 border border-white/10 rounded-[24px] p-6 text-sm w-full outline-none focus:border-primary/50 font-mono text-center text-white focus:bg-white/10 transition-all uppercase placeholder:text-white/20"
+                      className="bg-white/5 border border-white/10 rounded-2xl p-4 text-sm w-full outline-none focus:border-primary/50 font-mono text-center text-white focus:bg-white/10 transition-all uppercase placeholder:text-white/20"
                     />
                     <button 
                       onClick={() => {
@@ -392,16 +392,16 @@ const DetectionFix: React.FC = () => {
                         const t = (document.getElementById('edge-to') as HTMLInputElement).value;
                         if (f && t) addEdge(f, t);
                       }}
-                      className="w-16 h-16 bg-primary rounded-[24px] flex items-center justify-center text-white hover:scale-110 active:scale-95 transition-all shrink-0 shadow-2xl shadow-primary/30"
+                      className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center text-white hover:scale-105 active:scale-95 transition-all shrink-0 shadow-lg shadow-primary/20"
                     >
-                      <Plus className="w-8 h-8" />
+                      <Plus className="w-6 h-6" />
                     </button>
                   </div>
                 </div>
 
                 <button 
                   onClick={() => { setNodes([]); setEdges([]); }}
-                  className="w-full py-6 rounded-[28px] border border-white/10 text-white/40 font-black tracking-[0.4em] uppercase text-[9px] hover:bg-secondary hover:text-white transition-all italic hover:border-transparent"
+                  className="w-full py-4 rounded-2xl border border-white/5 text-white/30 font-bold tracking-widest uppercase text-[10px] hover:bg-secondary hover:text-white transition-all outline-none"
                 >
                   Terminate Grid Logic
                 </button>

@@ -1,191 +1,114 @@
-
 import React from 'react';
-import { motion } from 'framer-motion';
+import PageWrapper from '../components/PageWrapper';
 import { 
-  Presentation as PresentationIcon, 
-  Download, 
-  FileText, 
-  ChevronRight,
-  TrendingDown,
-  Activity,
-  ShieldCheck,
-  Zap,
-  Globe,
-  PieChart,
+  BarChart, 
+  BookOpen, 
+  Presentation as PresIcon, 
+  Map as MapIcon, 
+  ShieldAlert, 
+  RefreshCw, 
+  Database,
+  Download,
   ExternalLink
 } from 'lucide-react';
-import PageWrapper from '../components/PageWrapper';
-
-const StatBox = ({ label, value, trend, icon: Icon }: any) => (
-  <div className="hyper-card p-10 bg-white/[0.02] border border-white/10 rounded-[40px] hover:bg-white/[0.05] transition-all group backdrop-blur-3xl shadow-3xl">
-     <div className="flex justify-between items-start mb-8">
-        <div className="w-14 h-14 rounded-[22px] bg-primary/10 border border-primary/20 flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform duration-500 shadow-primary/10">
-           <Icon className="text-primary w-7 h-7 shadow-[0_0_15px_#FF6700]" />
-        </div>
-        <div className="text-[10px] font-black text-success flex items-center gap-2 italic uppercase tracking-widest opacity-60">
-           {trend} <TrendingDown className="w-4 h-4 rotate-180" />
-        </div>
-     </div>
-     <div className="text-5xl font-display font-black text-white mb-2 italic tracking-tighter">{value}</div>
-     <div className="text-[11px] font-black text-white/30 uppercase tracking-[0.4em] italic">{label}</div>
-  </div>
-);
 
 const Presentation: React.FC = () => {
   return (
     <PageWrapper>
-      <div className="relative">
-        <div className="fixed inset-0 grid-overlay opacity-10 pointer-events-none" />
+      <div className="max-w-4xl mx-auto px-6 py-12 md:py-24">
         
-        <div className="max-w-7xl mx-auto px-6 py-20 lg:py-40 relative z-10">
-          <div className="grid lg:grid-cols-12 gap-8 lg:gap-16">
-            
-            {/* Left: Branding & Overview */}
-            <div className="lg:col-span-12 mb-16 lg:mb-32">
-               <motion.div 
-                 initial={{ opacity: 0, y: 20 }}
-                 animate={{ opacity: 1, y: 0 }}
-                 className="space-y-6 lg:space-y-10 max-w-5xl"
-               >
-                 <div className="inline-flex items-center gap-4 px-6 py-2.5 rounded-full bg-primary/10 border border-primary/20 text-primary font-mono text-[11px] font-black uppercase tracking-[0.6em] italic opacity-80">
-                    Analytical Ledger // v4.Kernel
-                 </div>
-                 <h1 className="font-display font-black text-6xl md:text-8xl lg:text-[140px] text-white tracking-[-0.06em] uppercase leading-[0.8] italic break-words">
-                   Systemic <br className="hidden md:block" /> 
-                   <span className="text-transparent border-text block mt-4 lg:mt-8">Audit.Report</span>
-                 </h1>
-                 <p className="text-slate-200 text-xl lg:text-3xl font-light leading-relaxed font-sans max-w-3xl border-l-[4px] border-primary pl-8 lg:pl-12 italic opacity-95">
-                   Visualizing the systemic risks of resource contention in next-gen smart infrastructures 
-                   through the lens of Operating System deadlock theory.
-                 </p>
-               </motion.div>
+        {/* Header */}
+        <div className="text-center mb-16 space-y-4">
+          <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter uppercase">Project Presentation</h1>
+          <p className="text-[#6a8099] text-base md:text-lg font-light tracking-tight">GRIDLOCK — Smart City Deadlock Visualizer</p>
+        </div>
+
+        {/* Metadata Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-20">
+          {[
+            { label: 'University', val: 'Barrett Hodgson University' },
+            { label: 'Course', val: 'Operating Systems' },
+            { label: 'Topic', val: 'Deadlock Control' },
+            { label: 'Tools', val: 'React · Framer · Canvas' },
+          ].map((item, i) => (
+            <div key={i} className="glass-panel p-6 border-border-dim bg-primary/[0.03] text-center">
+              <span className="text-[10px] uppercase font-bold tracking-widest text-[#6a8099] block mb-2">{item.label}</span>
+              <span className="text-xs font-bold text-white block leading-tight">{item.val}</span>
             </div>
+          ))}
+        </div>
 
-            {/* Mid: Key Metrics Portfolio */}
-            <div className="lg:col-span-8 space-y-8 lg:space-y-12">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-                   <StatBox label="System Collision Risk" value="14.2%" trend="+2.4%" icon={Activity} />
-                   <StatBox label="Optimization Index" value="98.1" trend="-0.5%" icon={ShieldCheck} />
-                   <StatBox label="Deadlock Responsetime" value="42ms" trend="+8.1%" icon={Zap} />
-                </div>
-
-                <div className="hyper-card p-2 lg:p-3 bg-white/[0.03] border border-white/10 rounded-[40px] lg:rounded-[56px] shadow-3xl backdrop-blur-3xl">
-                   <div className="bg-black/40 rounded-[32px] lg:rounded-[48px] p-8 lg:p-16">
-                      <div className="flex flex-col md:flex-row items-center justify-between mb-12 lg:mb-16 gap-8">
-                         <div>
-                            <h3 className="text-white font-display font-black text-3xl lg:text-4xl uppercase tracking-tighter italic text-center md:text-left">Grid Matrix</h3>
-                            <p className="text-white/60 text-[11px] font-black uppercase tracking-[0.4em] italic mt-2 text-center md:text-left">Simulated vs Actual Collision Data</p>
-                         </div>
-                         <div className="flex gap-4">
-                            <div className="w-12 h-1 bg-primary rounded-full shadow-[0_0_10px_#FF6700]" />
-                            <div className="w-12 h-1 bg-white/10 rounded-full" />
-                         </div>
-                      </div>
-
-                      <div className="aspect-video lg:aspect-[21/9] w-full bg-black/40 rounded-[32px] lg:rounded-[40px] border border-white/5 flex items-center justify-center relative overflow-hidden group shadow-inner">
-                         <div className="absolute inset-0 grid-overlay opacity-10 group-hover:opacity-20 transition-opacity duration-1000" />
-                         <div className="absolute inset-0 flex items-center justify-center">
-                            <PieChart className="w-32 h-32 text-primary/10 animate-pulse" />
-                         </div>
-                         <div className="relative text-center space-y-6">
-                            <div className="w-32 h-32 rounded-full border-[6px] border-dashed border-primary/40 flex items-center justify-center animate-spin-slow">
-                               <PresentationIcon className="w-12 h-12 text-white rotate-0 group-hover:rotate-12 transition-transform duration-700" />
-                            </div>
-                            <div className="text-[11px] font-black text-primary uppercase tracking-[0.6em] italic opacity-60">Analytics Ready</div>
-                         </div>
-                      </div>
-
-                      <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-12">
-                         <div className="space-y-6">
-                            <div className="text-white/60 font-black text-[11px] tracking-[0.4em] uppercase italic opacity-60 flex justify-between">
-                              Systemic Stability
-                              <span className="text-primary tracking-tighter italic font-black text-sm">85%</span>
-                            </div>
-                            <div className="w-full h-2.5 bg-white/5 rounded-full overflow-hidden border border-white/5 p-0.5">
-                               <motion.div initial={{ width: 0 }} whileInView={{ width: '85%' }} className="h-full bg-primary rounded-full shadow-[0_0_15px_#FF6700]" />
-                            </div>
-                         </div>
-                         <div className="space-y-6">
-                            <div className="text-white/60 font-black text-[11px] tracking-[0.4em] uppercase italic opacity-60 flex justify-between">
-                              Recovery Efficiency
-                              <span className="text-secondary tracking-tighter italic font-black text-sm">62%</span>
-                            </div>
-                            <div className="w-full h-2.5 bg-white/5 rounded-full overflow-hidden border border-white/5 p-0.5">
-                               <motion.div initial={{ width: 0 }} whileInView={{ width: '62%' }} className="h-full bg-secondary rounded-full shadow-[0_0_15px_#f43f5e]" />
-                            </div>
-                         </div>
-                      </div>
-                   </div>
-                </div>
-             </div>
-
-             {/* Right: Technical Details & Assets */}
-             <div className="lg:col-span-4 h-full">
-                <div className="hyper-card p-12 bg-white/[0.02] border border-white/10 rounded-[56px] shadow-3xl backdrop-blur-3xl h-full flex flex-col justify-between">
-                   <div>
-                      <div className="flex items-center gap-4 mb-16">
-                         <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
-                           <FileText className="text-primary w-6 h-6" />
-                         </div>
-                         <h3 className="text-white font-black text-[11px] uppercase tracking-[0.5em] italic opacity-60">Case Meta</h3>
-                      </div>
-
-                      <div className="space-y-8">
-                         {[
-                           { label: 'Project Name', val: 'GRIDLOCK' },
-                           { label: 'Core Engine', val: 'Vite/Antigravity' },
-                           { label: 'Algorithm', val: 'Banker\'s OS v4' },
-                           { label: 'Region', val: 'Smart District 7' },
-                           { label: 'Status', val: 'Verified Safe' }
-                         ].map((item, i) => (
-                           <div key={i} className="flex justify-between items-end border-b border-white/5 pb-6 last:border-0 hover:bg-white/5 px-4 transition-all duration-500 group rounded-2xl">
-                              <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] italic group-hover:text-primary transition-colors">{item.label}</span>
-                              <span className="text-sm font-black text-white italic tracking-tighter">{item.val}</span>
-                           </div>
-                         ))}
-                      </div>
-                   </div>
-
-                   <div className="pt-16 space-y-4">
-                      <button className="w-full btn-primary h-20 text-[10px] font-black tracking-[0.5em] uppercase italic flex items-center justify-center gap-4 group rounded-[32px] shadow-2xl shadow-primary/20">
-                         <Download className="w-5 h-5 group-hover:-translate-y-2 transition-transform duration-500" />
-                         Download Audit PDF
-                      </button>
-                      <button className="w-full h-20 rounded-[32px] border border-white/10 text-white/40 text-[10px] font-black uppercase tracking-[0.5em] flex items-center justify-center gap-4 hover:bg-white/5 hover:text-white transition-all italic">
-                         <ExternalLink className="w-5 h-5 opacity-40 group-hover:opacity-100" />
-                         Source Artifacts
-                      </button>
-                   </div>
-                </div>
-             </div>
-
-              {/* Bottom: Final Callout */}
-              <div className="lg:col-span-12 mt-20 lg:mt-40">
-                 <div className="hyper-card p-10 lg:p-16 bg-primary/5 border border-primary/20 rounded-[40px] lg:rounded-[56px] relative overflow-hidden group shadow-3xl shadow-primary/5 backdrop-blur-3xl">
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-                    <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
-                       <div className="space-y-6 lg:space-y-8 max-w-2xl px-2">
-                          <div className="flex items-center gap-4">
-                             <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center border border-primary/40">
-                               <Globe className="text-primary w-5 h-5 shadow-[0_0_10px_#FF6700]" />
-                             </div>
-                             <span className="text-primary font-mono text-[12px] font-black uppercase tracking-[0.6em] italic opacity-80">Future Strategy</span>
-                          </div>
-                          <h2 className="text-white font-display font-black text-4xl md:text-6xl uppercase tracking-tighter italic leading-none">Scalable Grid <br/> <span className="text-primary">Intelligence</span></h2>
-                          <p className="text-slate-200 text-lg lg:text-xl font-light italic leading-relaxed opacity-95">
-                            The GRIDLOCK engine is designed to handle up to 4,096 concurrent resource nodes, 
-                            mapping real-time IoT data into our safety verification logic.
-                          </p>
-                       </div>
-                       <div className="shrink-0 w-48 h-48 lg:w-60 lg:h-60 rounded-full border-[3px] border-primary/20 flex items-center justify-center animate-spin-slow relative">
-                          <div className="absolute inset-0 rounded-full border-[3px] border-primary/40 border-dashed animate-reverse-spin" />
-                          <Zap className="w-12 h-12 lg:w-16 lg:h-16 text-primary shadow-[0_0_30px_#FF6700]" />
-                       </div>
-                    </div>
-                 </div>
-              </div>
+        {/* Slides Embed Placeholder */}
+        <div className="glass-panel p-2 md:p-4 border-2 border-dashed border-primary/30 bg-primary/[0.02] mb-12 aspect-video flex flex-col items-center justify-center text-center">
+          <div className="space-y-6 max-w-sm">
+            <PresIcon className="w-16 h-16 text-primary/30 mx-auto" />
+            <div>
+              <h3 className="text-white font-bold mb-2 uppercase tracking-widest text-sm">Slide Deck Host</h3>
+              <p className="text-xs text-[#6a8099] leading-relaxed">Embed your Google Slides or PowerPoint deck here for the final presentation.</p>
+            </div>
+            <div className="text-[10px] bg-primary/10 border border-primary/20 rounded-lg p-3 text-[#6a8099] font-mono leading-relaxed">
+              Google Slides: File → Share → Publish → Embed
+            </div>
           </div>
         </div>
+
+        {/* Features Coverage */}
+        <div className="space-y-8 mb-24">
+          <h3 className="text-white font-bold text-lg uppercase tracking-widest border-b border-border-dim pb-4 flex items-center gap-3">
+            <BarChart className="w-5 h-5 text-primary" /> Core Module Coverage
+          </h3>
+          <div className="grid md:grid-cols-2 gap-4">
+            {[
+              { icon: ShieldAlert, title: 'Deadlock Scenarios', desc: 'Real-time city simulations covering 2-way and multi-sector circular waits.' },
+              { icon: MapIcon, title: 'RAG Builder (RAG)', desc: 'Interactive graph constructor with automated DFS-based cycle detection.' },
+              { icon: Database, title: 'Banker\'s Monitor', desc: 'Resource management table calculating Safe Sequences and grid limits.' },
+              { icon: RefreshCw, title: 'Recovery Units', desc: 'Modelling the cost and logic of Termination vs Preemption strategies.' },
+              { icon: BookOpen, title: 'Theoretical Audit', desc: 'Detailed reference deck for OS concepts and famous historical failures.' },
+            ].map((feature, i) => (
+              <div key={i} className="glass-panel p-6 flex gap-5 border-border-dim hover:bg-primary/[0.05] transition-all">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 border border-primary/20">
+                  <feature.icon className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <h4 className="text-white font-bold text-xs uppercase tracking-tight mb-2">{feature.title}</h4>
+                  <p className="text-xs text-[#6a8099] leading-relaxed">{feature.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Key Learnings */}
+        <div className="glass-panel p-8 md:p-12 border-accent/20 bg-accent/[0.05] relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-8 opacity-10"><RefreshCw className="w-40 h-40 text-accent animate-spin-slow" /></div>
+          <div className="relative z-10 space-y-8">
+            <h3 className="text-accent font-black text-xl uppercase tracking-tighter">Diagnostic Summary</h3>
+            <div className="space-y-6">
+              {[
+                { n: '01', text: 'Deadlock is a systems-level emergent problem — perfect logic in isolation can still lead to failure at scale.' },
+                { n: '02', text: 'Coffman Conditions are the "Anatomy of Failure" — breaking single constraints secures the entire system.' },
+                { n: '03', text: 'Avoidance (Banker\'s) is safer but requires total future knowledge of system requests.' },
+                { n: '04', text: 'Detection and Recovery is the industry default, though it accepts data loss during termination.' }
+              ].map((item, i) => (
+                <div key={i} className="flex gap-6 items-start">
+                  <span className="font-mono text-accent/50 text-xs font-bold mt-1 tracking-widest">{item.n}</span>
+                  <p className="text-white/80 text-[13px] md:text-sm leading-relaxed font-light">{item.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Action Row */}
+        <div className="flex flex-wrap gap-4 mt-12 justify-center">
+          <button className="btn-ghost flex items-center gap-2 group">
+            <Download className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" /> Download PDF Report
+          </button>
+          <button className="btn-primary flex items-center gap-2 group">
+            <ExternalLink className="w-4 h-4 group-hover:scale-110 transition-transform" /> Full Screen View
+          </button>
+        </div>
+
       </div>
     </PageWrapper>
   );

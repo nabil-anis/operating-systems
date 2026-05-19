@@ -287,7 +287,7 @@ const Dashboard: React.FC = () => {
          {/* Re-using the lane visual for "Live Feed" feel */}
          <div className="space-y-4">
             <div className="h-12 md:h-16 w-full bg-green-900/10 rounded-xl border border-green-500/20 relative overflow-hidden flex items-center px-4 shadow-[inset_0_0_20px_rgba(34,197,94,0.1)]">
-              <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_49%,rgba(34,197,94,0.1)_50%,transparent_51%)] bg-[length:20px_md:40px_100%] animate-[pulse_0.5s_infinite]"></div>
+              <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_49%,rgba(34,197,94,0.1)_50%,transparent_51%)] bg-[length:20px_100%] md:bg-[length:40px_100%] animate-[pulse_0.5s_infinite]"></div>
               <div className="absolute inset-0 flex items-center justify-between px-4 md:px-8">
                  <span className="text-[10px] md:text-xs font-mono text-green-400 whitespace-nowrap">PROCESSING QUEUE</span>
                  <div className="flex gap-2">

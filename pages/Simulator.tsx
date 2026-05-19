@@ -1,450 +1,393 @@
-
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import PageWrapper from '../components/PageWrapper';
 import { 
   Play, 
   Pause, 
   RotateCcw, 
+  Activity, 
   Settings2, 
-  Layout, 
-  Table as TableIcon,
-  Activity,
-  Zap,
-  Info,
   ChevronDown,
-  ShieldAlert,
-  Cpu
+  Terminal,
+  ZapOff,
+  AlertCircle,
+  RefreshCw
 } from 'lucide-react';
-import PageWrapper from '../components/PageWrapper';
-import CityMap from '../components/simulator/CityMap';
-import SystemLog from '../components/simulator/SystemLog';
-import DeadlockAlert from '../components/simulator/DeadlockAlert';
-import { GridNode, GridEdge, SimulationLog, ScenarioPreset, AlgorithmType } from '../types';
 
-const ALGO_EXPLAINERS = {
-  detection: {
-    title: "Detection & Recovery",
-    desc: "Initializes without restriction. Monolith monitors the Resource Allocation Graph for cycles. If found, recovery triggers.",
-    safety: "Reactive"
+const SCENARIOS = [
+  {
+    title: 'Hospital vs Power Grid',
+    subtitle: '2-Process Deadlock',
+    desc: 'Hospital AI holds Primary Power and waits for Bandwidth. Power Grid holds Bandwidth and waits for Power. Classic circular wait.',
+    procs: [
+      { id: 'P1', name: 'Hospital AI', color: '#00d4ff', holds: [0], wants: [1] },
+      { id: 'P2', name: 'Power Grid', color: '#7c6ff7', holds: [1], wants: [0] }
+    ],
+    res: [{ id: 'R1', name: 'Primary Power' }, { id: 'R2', name: 'Network BW' }],
+    explain: [
+      { type: 'proc', text: 'P1 (Hospital AI) and P2 (Power Grid) are both deadlocked.' },
+      { type: 'res', text: 'R1 is held by P1 but needed by P2. R2 is held by P2 but needed by P1.' },
+      { type: 'cond', text: 'Coffman trigger: Circular Wait cycle confirmed.' }
+    ]
   },
-  prevention: {
-    title: "Total Ordering",
-    desc: "Strict resource hierarchy (R1 < R2 < R3). Circular wait is mathematically erased by preventing back-order requests.",
-    safety: "Proactive"
+  {
+    title: 'Multi-System Cascade',
+    subtitle: '3-Process Deadlock',
+    desc: 'Hospital AI, Train System, and Traffic Management form a three-way circular wait across three resources.',
+    procs: [
+      { id: 'P1', name: 'Hospital AI', color: '#00d4ff', holds: [0], wants: [1] },
+      { id: 'P2', name: 'Train System', color: '#7c6ff7', holds: [1], wants: [2] },
+      { id: 'P3', name: 'Traffic Mgmt', color: '#00e676', holds: [2], wants: [0] }
+    ],
+    res: [{ id: 'R1', name: 'Power' }, { id: 'R2', name: 'Bandwidth' }, { id: 'R3', name: 'Emergency' }],
+    explain: [
+      { type: 'proc', text: 'P1, P2, and P3 are deadlocked in a 3-way chain.' },
+      { type: 'res', text: 'Resources are held in a rotational dependency.' },
+      { type: 'cond', text: 'Circular Wait: P1 → P2 → P3 → P1.' }
+    ]
   },
-  avoidance: {
-    title: "Banker's Algorithm",
-    desc: "Every request undergoes a virtual safety simulation. If no safe sequence exists, the system blocks the request.",
-    safety: "Predictive"
+  {
+    title: 'Smart City Blackout',
+    subtitle: '4-Process Critical Failure',
+    desc: 'Total city grid collapse. All four sectors holding and waiting for resources in a perfect unbreakable loop.',
+    procs: [
+      { id: 'P1', name: 'Hospital AI', color: '#00d4ff', holds: [0], wants: [1] },
+      { id: 'P2', name: 'Power Grid', color: '#7c6ff7', holds: [1], wants: [2] },
+      { id: 'P3', name: 'Train System', color: '#00e676', holds: [2], wants: [3] },
+      { id: 'P4', name: 'Traffic Mgmt', color: '#ff8c42', holds: [3], wants: [0] }
+    ],
+    res: [{ id: 'R1', name: 'Power' }, { id: 'R2', name: 'Bandwidth' }, { id: 'R3', name: 'Emergency' }, { id: 'R4', name: 'Data Bus' }],
+    explain: [
+      { type: 'proc', text: 'All four city systems are permanently blocked.' },
+      { type: 'res', text: 'Total gridlock. Every sector is waiting.' },
+      { type: 'cond', text: 'Maximum Entropy reached. Systemic Circular Wait across local infrastructure.' }
+    ]
   }
-};
-
-const INITIAL_NODES: GridNode[] = [
-  { id: 'P1', type: 'process', label: 'Hospital AI', x: 100, y: 100, status: 'normal', color: '#00f5ff' },
-  { id: 'P2', type: 'process', label: 'Power Grid', x: 400, y: 100, status: 'normal', color: '#6c63ff' },
-  { id: 'P3', type: 'process', label: 'Metro Train', x: 400, y: 400, status: 'normal', color: '#00e676' },
-  { id: 'P4', type: 'process', label: 'Traffic Hub', x: 100, y: 400, status: 'normal', color: '#ff4444' },
-  { id: 'R1', type: 'resource', label: 'Primary Power', x: 250, y: 50, status: 'normal' },
-  { id: 'R2', type: 'resource', label: 'Network BW', x: 450, y: 250, status: 'normal' },
-  { id: 'R3', type: 'resource', label: 'Emergency Ch', x: 250, y: 450, status: 'normal' },
-  { id: 'R4', type: 'resource', label: 'Data Bus', x: 50, y: 250, status: 'normal' },
 ];
 
-const SCENARIO_DATA = {
-  scenario1: {
-    title: "The 2-Way Conflict",
-    description: "Hospital AI holds Power but wants Network. Power Grid holds Network but wants Power.",
-    algoNote: "Analysis: This forms a direct cycle (P1 → R2 → P2 → R1 → P1). Cyclical wait condition met."
-  },
-  scenario2: {
-    title: "3-Way System Cycle",
-    description: "A cascade involving Metro Trains, Traffic Hubs, and Power Distribution.",
-    algoNote: "Analysis: Complex cycle where dependencies are chained across three separate systems."
-  }
-};
-
 const Simulator: React.FC = () => {
-  const [nodes, setNodes] = useState<GridNode[]>(INITIAL_NODES);
-  const [edges, setEdges] = useState<GridEdge[]>([]);
-  const [logs, setLogs] = useState<SimulationLog[]>([]);
+  const [scenarioIdx, setScenarioIdx] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [speed, setSpeed] = useState(1);
-  const [scenario, setScenario] = useState<ScenarioPreset>('scenario1');
-  const [algorithm, setAlgorithm] = useState<AlgorithmType>('detection');
-  const [showTable, setShowTable] = useState(true);
   const [isDeadlocked, setIsDeadlocked] = useState(false);
   const [step, setStep] = useState(0);
-  const [showTheoreticalExp, setShowTheoreticalExp] = useState(true);
-  const [algoStepInfo, setAlgoStepInfo] = useState<string>('');
+  const [speed, setSpeed] = useState(2);
+  const [logs, setLogs] = useState<{ type: string; msg: string; time: string }[]>([]);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const addLog = useCallback((message: string, type: SimulationLog['type'] = 'info') => {
-    const timestamp = new Date().toLocaleTimeString([], { hour12: false, minute: '2-digit', second: '2-digit' });
-    setLogs(prev => [...prev, { id: Math.random().toString(), timestamp, message, type }]);
-  }, []);
+  const scenario = SCENARIOS[scenarioIdx];
+
+  const addLog = (type: string, msg: string) => {
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    setLogs(prev => [...prev.slice(-10), { type, msg, time }]);
+  };
 
   const reset = () => {
-    setNodes(INITIAL_NODES);
-    setEdges([]);
-    setLogs([]);
+    if (timerRef.current) clearTimeout(timerRef.current);
     setIsPlaying(false);
     setIsDeadlocked(false);
     setStep(0);
-    setAlgoStepInfo('');
-    addLog(`System recalibrated. Ready for ${ALGO_EXPLAINERS[algorithm].title}.`, 'info');
+    setLogs([{ type: 'info', msg: 'System Audit Reset. Ready for diagnostics.', time: '-' }]);
+  };
+
+  const start = () => {
+    if (isPlaying) return;
+    setIsPlaying(true);
+    setStep(0);
+    addLog('info', `Initializing diagnostics for Sector: ${scenario.title}`);
   };
 
   useEffect(() => {
-    if (!isPlaying) return;
-
-    const timer = setTimeout(() => {
-      setStep(s => s + 1);
-      
-      const newEdges = [...edges];
-      const newNodes = [...nodes];
-
-      // Scenarios driven by Algorithm
-      if (algorithm === 'detection') {
-        if (scenario === 'scenario1') {
+    if (isPlaying && !isDeadlocked) {
+      const waitTime = [2000, 1200, 600][speed - 1];
+      timerRef.current = setTimeout(() => {
+        if (step < 3) {
           if (step === 0) {
-            newEdges.push({ id: 'e1', from: 'R1', to: 'P1', type: 'holds', status: 'active' });
-            newNodes[0].status = 'running';
-            setAlgoStepInfo('PROCESS(P1) ACQUIRES RESOURCE(R1). STATE = RUNNING.');
+            scenario.procs.forEach(p => p.holds.forEach(ri => addLog('success', `${p.id} (${p.name}) locked ${scenario.res[ri].id}.`)));
           } else if (step === 1) {
-            newEdges.push({ id: 'e2', from: 'R2', to: 'P2', type: 'holds', status: 'active' });
-            newNodes[1].status = 'running';
-            setAlgoStepInfo('PROCESS(P2) ACQUIRES RESOURCE(R2). STATE = RUNNING.');
+            scenario.procs.forEach(p => p.wants.forEach(ri => addLog('warning', `${p.id} requesting ${scenario.res[ri].id} — BLOCKED.`)));
           } else if (step === 2) {
-            newEdges.push({ id: 'e3', from: 'P1', to: 'R2', type: 'requests', status: 'waiting' });
-            newNodes[0].status = 'waiting';
-            setAlgoStepInfo('P1 REQUESTS R2 (HELD BY P2). P1 BLOCKED.');
-          } else if (step === 3) {
-            newEdges.push({ id: 'e4', from: 'P2', to: 'R1', type: 'requests', status: 'waiting' });
-            newNodes[1].status = 'waiting';
-            setAlgoStepInfo('P2 REQUESTS R1 (HELD BY P1). P2 BLOCKED. CYCLE CLOSED.');
-          } else if (step === 4) {
             setIsDeadlocked(true);
             setIsPlaying(false);
-            newNodes[0].status = 'deadlocked';
-            newNodes[1].status = 'deadlocked';
-            newEdges.forEach(e => e.status = 'deadlocked');
-            setAlgoStepInfo('DEADLOCK DETECTED: CIRCULAR WAIT [P1 ↔ P2]. RECOVERY NECESSARY.');
+            addLog('error', '⚠ DEADLOCK ALERT: Circular Wait signature confirmed.');
           }
+          setStep(prev => prev + 1);
         }
-      } else if (algorithm === 'prevention') {
-        if (scenario === 'scenario1') {
-          if (step === 0) {
-            newEdges.push({ id: 'e1', from: 'R1', to: 'P1', type: 'holds', status: 'active' });
-            newNodes[0].status = 'running';
-            setAlgoStepInfo('P1 ACQUIRES R1. ORDERING: R1 = 1.');
-          } else if (step === 1) {
-            newEdges.push({ id: 'e2', from: 'R2', to: 'P2', type: 'holds', status: 'active' });
-            newNodes[1].status = 'running';
-            setAlgoStepInfo('P2 ACQUIRES R2. ORDERING: R2 = 2.');
-          } else if (step === 2) {
-            newEdges.push({ id: 'e3', from: 'P1', to: 'R2', type: 'requests', status: 'waiting' });
-            newNodes[0].status = 'waiting';
-            setAlgoStepInfo('P1 REQUESTS R2. ALLOWED: INDEX(R2) > INDEX(R1).');
-          } else if (step === 3) {
-            setAlgoStepInfo('REQUEST DENIED: P2 ATTEMPTS R1. BLOCKED BY TOTAL ORDERING [2 > 1]. CYCLE AVERTED.');
-            addLog('Prevention Logic: Disallowed out-of-order request from P2.', 'success');
-            setIsPlaying(false);
-          }
-        }
-      } else if (algorithm === 'avoidance') {
-        if (scenario === 'scenario1') {
-          if (step === 0) {
-            newEdges.push({ id: 'e1', from: 'R1', to: 'P1', type: 'holds', status: 'active' });
-            newNodes[0].status = 'running';
-            setAlgoStepInfo('BANKER SAFETY TEST: ALLOCATING R1 TO P1 IS SAFE.');
-          } else if (step === 1) {
-            newEdges.push({ id: 'e2', from: 'R2', to: 'P2', type: 'holds', status: 'active' });
-            newNodes[1].status = 'running';
-            setAlgoStepInfo('BANKER SAFETY TEST: ALLOCATING R2 TO P2 IS SAFE.');
-          } else if (step === 2) {
-            newNodes[0].status = 'waiting';
-            setAlgoStepInfo('ALLOCATION BLOCKED: GRANTING R2 TO P1 WOULD LEAD TO AN UNSAFE STATE.');
-            addLog('Banker Algorithm: Resource request postponed for safety.', 'warning');
-            setIsPlaying(false);
-          }
-        }
-      }
+      }, waitTime);
+    }
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+  }, [isPlaying, isDeadlocked, step, speed, scenario]);
 
-      setEdges(newEdges);
-      setNodes(newNodes);
-    }, 1500 / speed);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-    return () => clearTimeout(timer);
-  }, [isPlaying, step, speed, scenario, algorithm, edges, nodes, addLog]);
+    const dpr = window.devicePixelRatio || 1;
+    const W = canvas.offsetWidth;
+    const H = 390;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    ctx.scale(dpr, dpr);
+
+    ctx.clearRect(0, 0, W, H);
+    
+    // Background Grid
+    ctx.strokeStyle = 'rgba(0, 212, 255, 0.03)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+    for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+    const numP = scenario.procs.length;
+    const numR = scenario.res.length;
+    const pNodes = scenario.procs.map((p, i) => ({ x: W * (i + 1) / (numP + 1), y: 110, id: p.id, name: p.name, color: p.color }));
+    const rNodes = scenario.res.map((r, i) => ({ x: W * (i + 1) / (numR + 1), y: 280, id: r.id, name: r.name }));
+
+    const drawArrow = (x1: number, y1: number, x2: number, y2: number, color: string, dash: boolean) => {
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      if (dash) ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+
+      const angle = Math.atan2(y2 - y1, x2 - x1);
+      ctx.setLineDash([]);
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(x2, y2);
+      ctx.lineTo(x2 - 10 * Math.cos(angle - Math.PI / 6), y2 - 10 * Math.sin(angle - Math.PI / 6));
+      ctx.lineTo(x2 - 10 * Math.cos(angle + Math.PI / 6), y2 - 10 * Math.sin(angle + Math.PI / 6));
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    };
+
+    // Draw Edges
+    if (step >= 1) {
+      scenario.procs.forEach((p, pi) => {
+        p.holds.forEach(ri => {
+          drawArrow(pNodes[pi].x, pNodes[pi].y + 35, rNodes[ri].x, rNodes[ri].y - 35, isDeadlocked ? '#ff3b3b' : '#00e676', false);
+        });
+      });
+    }
+    if (step >= 2) {
+      scenario.procs.forEach((p, pi) => {
+        p.wants.forEach(ri => {
+          drawArrow(rNodes[ri].x, rNodes[ri].y + 35, pNodes[pi].x, pNodes[pi].y + 35, isDeadlocked ? '#ff5533' : '#ffcc44', true);
+        });
+      });
+    }
+
+    // Draw Process Nodes
+    pNodes.forEach(node => {
+      ctx.save();
+      ctx.shadowBlur = isDeadlocked ? 20 : 10;
+      ctx.shadowColor = isDeadlocked ? '#ff3b3b' : node.color;
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, 35, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(5, 10, 16, 0.95)';
+      ctx.fill();
+      ctx.strokeStyle = isDeadlocked ? '#ff3b3b' : node.color;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.fillStyle = isDeadlocked ? '#ff3b3b' : node.color;
+      ctx.font = 'bold 12px Sora';
+      ctx.textAlign = 'center';
+      ctx.fillText(node.id, node.x, node.y - 5);
+      ctx.fillStyle = '#6a8099';
+      ctx.font = '9px Sora';
+      ctx.fillText(node.name, node.x, node.y + 10);
+    });
+
+    // Draw Resource Nodes
+    rNodes.forEach(node => {
+      const size = 30;
+      ctx.save();
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = isDeadlocked ? '#ff3b3b' : '#7c6ff7';
+      ctx.beginPath();
+      ctx.moveTo(node.x, node.y - size);
+      ctx.lineTo(node.x + size, node.y);
+      ctx.lineTo(node.x, node.y + size);
+      ctx.lineTo(node.x - size, node.y);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(5, 10, 16, 0.95)';
+      ctx.fill();
+      ctx.strokeStyle = isDeadlocked ? '#ff3b3b' : '#7c6ff7';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.fillStyle = isDeadlocked ? '#ff3b3b' : '#7c6ff7';
+      ctx.font = 'bold 11px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(node.id, node.x, node.y - 4);
+      ctx.fillStyle = '#6a8099';
+      ctx.font = '8px Sora';
+      ctx.fillText(node.name, node.x, node.y + 12);
+    });
+
+  }, [scenario, step, isDeadlocked]);
 
   return (
     <PageWrapper>
-      <DeadlockAlert 
-        isVisible={isDeadlocked}
-        onRestart={reset}
-        onTerminate={() => {
-          setIsDeadlocked(false);
-          addLog('Recovery Triggered: Terminating P2 to break cycle.', 'warning');
-          setEdges(prev => prev.filter(e => e.from !== 'P2' && e.to !== 'P2'));
-          setNodes(prev => prev.map(n => n.id === 'P2' ? { ...n, status: 'normal' } : n));
-        }}
-        onPreempt={() => {
-          setIsDeadlocked(false);
-          addLog('Resource Preemption: Forcing P1 to release R1.', 'warning');
-          setEdges(prev => prev.map(e => (e.id === 'e1' ? { ...e, from: 'R1', to: 'P2', type: 'holds', status: 'active' } : e)));
-        }}
-      />
-
-      <div className="max-w-7xl mx-auto px-6 py-12 relative">
-        <div className="grid lg:grid-cols-12 gap-10 relative z-10">
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="grid lg:grid-cols-12 gap-8">
           
-          {/* Header Area */}
-          <div className="lg:col-span-12 mb-8 lg:mb-12">
-             <motion.div 
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex flex-col md:flex-row justify-between items-start md:items-center gap-10"
-             >
-               <div className="space-y-4">
-                  <div className="inline-flex items-center gap-4 px-5 py-2 rounded-full bg-primary/10 border border-primary/30 text-primary font-mono text-[11px] font-black tracking-[0.4em] uppercase mb-2 italic opacity-80">
-                    Diagnostic Lab // v4.Kernel
+          {/* Simulation Area */}
+          <div className="lg:col-span-8 space-y-6">
+            <div className="glass-panel p-1 relative overflow-hidden">
+              <div className="absolute top-4 left-6 flex items-center gap-2 z-10">
+                <Activity className="w-4 h-4 text-primary" />
+                <span className="text-[10px] uppercase font-bold tracking-widest text-[#6a8099]">City Resource Map</span>
+              </div>
+              <div className="absolute top-4 right-6 flex items-center gap-2 z-10">
+                <span className={`w-2 h-2 rounded-full animate-pulse ${isDeadlocked ? 'bg-secondary' : 'bg-success'}`} />
+                <span className={`text-[10px] uppercase font-bold tracking-widest ${isDeadlocked ? 'text-secondary' : 'text-success'}`}>
+                  {isDeadlocked ? 'DEADLOCK' : 'NOMINAL'}
+                </span>
+              </div>
+
+              {/* Deadlock Alert Modal */}
+              <AnimatePresence>
+                {isDeadlocked && (
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className="absolute inset-0 z-[20] flex items-center justify-center p-8 bg-[#050a10]/60 backdrop-blur-md"
+                  >
+                    <div className="max-w-md w-full glass-panel p-8 border-secondary/30 relative overflow-hidden bg-secondary/[0.05]">
+                      <div className="absolute top-0 right-0 p-4 opacity-10"><ZapOff className="w-24 h-24 text-secondary" /></div>
+                      <div className="relative z-10 space-y-6">
+                        <div className="text-secondary font-black text-xs uppercase tracking-[0.2em]">⚠ Critical Alert</div>
+                        <h3 className="text-white text-2xl font-bold">GRID BLACKOUT</h3>
+                        <p className="text-[#6a8099] text-sm leading-relaxed">Forensic analysis has identified a circular resource dependency. All city sectors are locked and unable to process data.</p>
+                        <div className="flex gap-3 pt-4">
+                          <button onClick={reset} className="btn-primary bg-secondary hover:bg-secondary/80 flex-1 py-4">Restore System</button>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <canvas 
+                ref={canvasRef}
+                className="w-full bg-[#050a10]/50 block"
+              />
+            </div>
+
+            {/* Explanation Section */}
+            <AnimatePresence>
+              {isDeadlocked && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="glass-panel p-8 border-secondary/20 bg-secondary/[0.03] space-y-6"
+                >
+                  <div className="text-secondary text-[10px] uppercase font-bold tracking-widest">Root Cause Investigation</div>
+                  <div className="grid md:grid-cols-3 gap-6">
+                    {scenario.explain.map((item, i) => (
+                      <div key={i} className="flex gap-4">
+                        <div className={`w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0 ${item.type === 'proc' ? 'bg-primary' : item.type === 'res' ? 'bg-accent' : 'bg-secondary'}`} />
+                        <p className="text-[#e0eaf5] text-[11px] leading-relaxed font-bold uppercase tracking-tight">{item.text}</p>
+                      </div>
+                    ))}
                   </div>
-                  <h1 className="text-5xl md:text-7xl lg:text-9xl font-display font-black text-white tracking-tighter flex flex-wrap items-center gap-x-8 uppercase leading-none italic">
-                    Grid
-                    <span className="text-transparent border-text italic">Simulator</span>
-                  </h1>
-                  <p className="text-slate-300 font-mono text-[12px] mt-4 tracking-[0.3em] uppercase font-black italic opacity-60">HyperOS v4.0.2 // SMART CITY GRIDLOCK ENGINE</p>
-               </div>
-               <div className="flex items-center gap-6 w-full md:w-auto mt-6 md:mt-0">
-                  <div className={`flex-grow md:flex-grow-0 px-8 py-5 lg:px-12 lg:py-8 rounded-[28px] lg:rounded-[40px] border flex items-center justify-center gap-6 text-[11px] lg:text-[12px] font-black uppercase tracking-[0.3em] italic transition-all duration-700 shadow-2xl ${isDeadlocked ? 'bg-secondary/10 border-secondary/50 text-secondary shadow-secondary/20 scale-105' : 'bg-primary/20 border-primary/50 text-primary shadow-primary/20'}`}>
-                    <div className={`w-3 h-3 lg:w-5 lg:h-5 rounded-full shadow-lg ${isDeadlocked ? 'bg-secondary animate-pulse shadow-secondary' : 'bg-primary shadow-primary'}`} />
-                    {isDeadlocked ? 'Critical Breach' : 'System Healthy'}
-                  </div>
-               </div>
-             </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
-          {/* Left Panel: Simulation Canvas */}
-          <div className="lg:col-span-8 space-y-12">
-            <div className="hyper-card p-2 lg:p-4 bg-white/[0.03] border border-white/10 rounded-[44px] lg:rounded-[64px] shadow-3xl backdrop-blur-3xl overflow-hidden relative group">
-              <div className="bg-black/40 rounded-[36px] lg:rounded-[56px] p-8 lg:p-16 min-h-[500px] lg:min-h-[800px] flex flex-col relative overflow-hidden">
-                <div className="absolute inset-0 grid-overlay opacity-10 pointer-events-none group-hover:opacity-20 transition-opacity duration-1000" />
-                <div className="flex flex-col md:flex-row justify-between items-center mb-16 relative z-10 gap-8">
-                   <div className="flex items-center gap-8">
-                      <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-[28px] lg:rounded-[32px] bg-white/5 border border-white/10 flex items-center justify-center shadow-2xl">
-                        <Layout className="w-8 h-8 lg:w-10 lg:h-10 text-primary shadow-[0_0_15px_#FF6700]" />
-                      </div>
-                      <div>
-                        <span className="text-white font-black text-sm lg:text-base uppercase tracking-[0.4em] block italic">Topology Hub</span>
-                        <span className="text-white/60 text-[11px] lg:text-[12px] uppercase font-black italic tracking-[0.2em] mt-2">Resource Allocation Graph // Real-time</span>
-                      </div>
-                   </div>
-                   <div className="flex items-center gap-6">
-                      <button 
-                        onClick={() => setShowTheoreticalExp(!showTheoreticalExp)} 
-                        className={`text-[11px] font-black uppercase tracking-[0.5em] px-10 py-5 rounded-full border transition-all italic shadow-2xl ${showTheoreticalExp ? 'border-primary text-primary bg-primary/10' : 'border-white/20 text-white/50 hover:text-white hover:border-white/40'}`}
-                      >
-                        {showTheoreticalExp ? 'Hide Insights' : 'Kernel Insights'}
-                      </button>
-                   </div>
+          {/* Controls Panel */}
+          <div className="lg:col-span-4 space-y-6">
+            <div className="glass-panel p-8 space-y-8">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20"><Settings2 className="w-5 h-5 text-primary" /></div>
+                <div>
+                  <h2 className="text-white font-bold text-sm tracking-tight">Dispatcher Terminal</h2>
+                  <p className="text-[#6a8099] text-[10px] font-bold uppercase tracking-widest">Unit 04 • Smart City Monitor</p>
                 </div>
+              </div>
 
-                <div className="flex-grow flex items-center justify-center relative min-h-[400px] lg:min-h-[500px]">
-                  <CityMap nodes={nodes} edges={edges} isDeadlocked={isDeadlocked} />
-                </div>
-
-                <AnimatePresence>
-                  {showTheoreticalExp && (
-                    <motion.div 
-                      initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                      animate={{ opacity: 1, height: 'auto', marginTop: 48 }}
-                      exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                      className="p-8 lg:p-12 rounded-[32px] lg:rounded-[48px] bg-black/80 backdrop-blur-3xl border border-white/10 shadow-3xl z-20 overflow-hidden"
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-[#6a8099] uppercase tracking-widest ml-1">Grid Scenario</label>
+                  <div className="relative group">
+                    <select 
+                      className="w-full bg-primary/5 border border-border-dim rounded-xl p-4 text-xs font-bold text-white outline-none cursor-pointer hover:bg-primary/10 transition-all appearance-none"
+                      value={scenarioIdx}
+                      onChange={(e) => { setScenarioIdx(parseInt(e.target.value)); reset(); }}
+                      disabled={isPlaying}
                     >
-                      <div className="flex flex-col sm:flex-row justify-between items-start mb-8 gap-4">
-                        <h4 className="text-primary text-[11px] font-black uppercase tracking-[0.5em] flex items-center gap-4 italic leading-none opacity-80">
-                          <Info className="w-5 h-5 shadow-[0_0_15px_#FF6700]" />
-                          Kernel Strategy: {ALGO_EXPLAINERS[algorithm].title}
-                        </h4>
-                        <div className="px-6 py-2 rounded-full bg-primary/10 border border-primary/20 text-[11px] font-black text-primary uppercase tracking-[0.3em] italic">
-                          Mode: {ALGO_EXPLAINERS[algorithm].safety}
-                        </div>
-                      </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-center">
-                        <p className="text-xl lg:text-2xl text-white font-black italic leading-tight tracking-tight uppercase border-l-[4px] border-primary pl-6 lg:pl-10">
-                          {ALGO_EXPLAINERS[algorithm].desc}
-                        </p>
-                        <div className="bg-white/5 rounded-[24px] lg:rounded-[32px] p-6 lg:p-8 border border-white/20 shadow-inner">
-                           <div className="text-[11px] font-black text-primary/80 uppercase tracking-[0.5em] mb-4 italic">Live Cycle Analysis</div>
-                           <div className="text-white font-mono text-sm font-bold leading-relaxed min-h-[4em] opacity-90">
-                             {algoStepInfo || 'AWAITING KERNEL_CYCLE EXECUTION...'}
-                           </div>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </div>
-
-            <SystemLog logs={logs} />
-          </div>
-
-          {/* Right Panel: Controllers */}
-          <div className="lg:col-span-4 space-y-6 lg:space-y-10">
-            <div className="hyper-card p-8 lg:p-12 space-y-10 lg:space-y-12 bg-white/[0.02] border border-white/10 rounded-[32px] lg:rounded-[48px] backdrop-blur-3xl shadow-3xl">
-              <div className="space-y-8 lg:space-y-10">
-                <div className="flex items-center gap-6">
-                  <div className="w-14 h-14 lg:w-16 lg:h-16 rounded-[24px] lg:rounded-[28px] bg-primary/10 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10">
-                    <Settings2 className="w-6 h-6 lg:w-8 lg:h-8 text-primary shadow-[0_0_15px_#FF6700]" />
+                      {SCENARIOS.map((s, i) => <option key={i} value={i}>{s.title}</option>)}
+                    </select>
+                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6a8099] pointer-events-none" />
                   </div>
-                  <div>
-                    <h2 className="text-white font-black text-sm lg:text-base uppercase tracking-[0.4em] italic opacity-80">Control Unit</h2>
-                    <p className="text-primary text-[11px] lg:text-[12px] font-mono font-black italic">KERNEL_SYS_v4</p>
+                  <div className="p-4 bg-primary/5 border border-border-dim rounded-xl">
+                    <div className="text-primary text-[10px] font-black uppercase mb-1">{scenario.subtitle}</div>
+                    <p className="text-[#6a8099] text-[11px] leading-normal">{scenario.desc}</p>
                   </div>
                 </div>
 
-                 <div className="space-y-6 lg:space-y-8">
-                    <div className="space-y-3 lg:space-y-4">
-                      <label className="text-[11px] lg:text-[12px] font-black text-white/60 uppercase tracking-[0.5em] ml-2 italic">Algorithm Strategy</label>
-                      <div className="relative group">
-                        <select 
-                           className="w-full bg-white/5 border border-white/20 rounded-[20px] lg:rounded-[28px] p-4 lg:p-6 text-[12px] lg:text-[13px] text-white font-black uppercase tracking-widest focus:border-primary transition-all appearance-none cursor-pointer italic"
-                           value={algorithm}
-                           onChange={(e) => {
-                             setAlgorithm(e.target.value as AlgorithmType);
-                             reset();
-                           }}
-                           disabled={isPlaying}
-                         >
-                           <option value="detection">Detection & Recovery</option>
-                           <option value="prevention">Prevention (Ordering)</option>
-                           <option value="avoidance">Avoidance (Banker's)</option>
-                         </select>
-                         <ChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20 pointer-events-none group-hover:text-primary transition-colors" />
-                      </div>
-                    </div>
-
-                   <div className="space-y-3 lg:space-y-4">
-                      <label className="text-[11px] lg:text-[12px] font-black text-white/60 uppercase tracking-[0.5em] ml-2 italic">Scenario Selection</label>
-                     <div className="relative group">
-                       <select 
-                          className="w-full bg-white/5 border border-white/20 rounded-[20px] lg:rounded-[28px] p-4 lg:p-6 text-[12px] lg:text-[13px] text-white font-black uppercase tracking-widest focus:border-primary transition-all appearance-none cursor-pointer italic"
-                          value={scenario}
-                          onChange={(e) => {
-                            setScenario(e.target.value as ScenarioPreset);
-                            reset();
-                          }}
-                          disabled={isPlaying}
-                        >
-                          <option value="scenario1">2-Way Conflict (Standard)</option>
-                          <option value="scenario2">3-Way Gridlock (Advanced)</option>
-                        </select>
-                        <ChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20 pointer-events-none group-hover:text-primary transition-colors" />
-                     </div>
-                   </div>
-
-                   <div className="flex gap-4">
-                      <button 
-                        onClick={() => setIsPlaying(!isPlaying)}
-                        disabled={isDeadlocked}
-                        className={`flex-grow h-16 lg:h-20 rounded-[20px] lg:rounded-[32px] font-black text-[12px] lg:text-[13px] uppercase tracking-[0.4em] flex items-center justify-center gap-4 lg:gap-6 transition-all italic shadow-2xl ${
-                          isPlaying 
-                          ? 'bg-secondary text-white shadow-secondary/20' 
-                          : 'btn-primary'
-                        } disabled:opacity-30 disabled:grayscale`}
-                      >
-                        {isPlaying ? <Pause className="w-5 h-5 lg:w-6 lg:h-6" /> : <Play className="w-5 h-5 lg:w-6 lg:h-6 text-white" />}
-                        {isPlaying ? 'ABORT' : 'Execute'}
-                      </button>
-                      <button 
-                         onClick={reset}
-                         className="w-16 h-16 lg:w-20 lg:h-20 rounded-[20px] lg:rounded-[32px] border border-white/10 bg-white/5 flex items-center justify-center hover:bg-white/10 hover:border-white/20 transition-all text-white/20 hover:text-white shadow-2xl"
-                      >
-                        <RotateCcw className="w-6 h-6 lg:w-8 lg:h-8" />
-                      </button>
-                   </div>
-
-                   <div className="pt-6 lg:pt-8 space-y-4 lg:space-y-6">
-                      <div className="flex justify-between items-end px-2">
-                         <div>
-                            <div className="text-[9px] lg:text-[10px] font-black text-white/30 uppercase tracking-[0.4em] italic leading-none">Logic Clock</div>
-                            <div className="text-3xl lg:text-4xl font-display font-black text-white mt-1 italic">{speed}<span className="text-primary text-xs lg:text-sm ml-2">MHz</span></div>
-                         </div>
-                      </div>
-                      <div className="px-2">
-                        <input 
-                          type="range" min="0.5" max="3" step="0.5" 
-                          value={speed} 
-                          onChange={(e) => setSpeed(parseFloat(e.target.value))}
-                          className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-primary" 
-                        />
-                      </div>
-                   </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-end px-1">
+                    <label className="text-[10px] font-bold text-[#6a8099] uppercase tracking-widest">Diagnostic Speed</label>
+                    <span className="text-white font-mono text-xs">{speed}/3</span>
+                  </div>
+                  <input 
+                    type="range" min="1" max="3" step="1" 
+                    value={speed} 
+                    onChange={(e) => setSpeed(parseInt(e.target.value))}
+                    className="w-full h-1.5 bg-primary/10 rounded-lg appearance-none cursor-pointer accent-primary" 
+                  />
                 </div>
-              </div>
 
-              <div className="pt-8 lg:pt-12 border-t border-white/10 space-y-6 lg:space-y-8">
-                 <div className="flex justify-between items-center">
-                    <h3 className="text-[12px] lg:text-[13px] font-black text-white/60 uppercase tracking-[0.4em] flex items-center gap-4 italic leading-none">
-                       <TableIcon className="w-5 h-5 text-primary opacity-80" />
-                       Grid Statistics
-                    </h3>
-                    <div className="w-2.5 h-2.5 rounded-full bg-primary shadow-[0_0_15px_#FF6700] animate-pulse" />
-                  </div>
-                  <div className="rounded-[24px] lg:rounded-[32px] overflow-hidden border border-white/20 bg-black/60 shadow-2xl">
-                     <div className="p-6 lg:p-8 overflow-x-auto">
-                      <table className="w-full text-left font-sans text-xs lg:text-sm min-w-[200px]">
-                        <thead>
-                          <tr className="text-white/40 uppercase font-black tracking-[0.4em] italic">
-                            <th className="pb-4 lg:pb-6">SYS_ID</th>
-                            <th className="pb-4 lg:pb-6">HOLD</th>
-                            <th className="pb-4 lg:pb-6">PEND</th>
-                          </tr>
-                        </thead>
-                        <tbody className="text-white font-black italic">
-                          {['P1', 'P2', 'P3', 'P4'].map(pId => {
-                            const held = edges.filter(e => e.to === pId && e.type === 'holds').map(e => e.from).join(',') || '-';
-                            const req = edges.filter(e => e.from === pId && e.type === 'requests').map(e => e.to).join(',') || '-';
-                            return (
-                              <tr key={pId} className="border-t border-white/5 hover:bg-white/10 transition-colors group">
-                                <td className="py-4 lg:py-5 text-primary tracking-widest text-base">{pId}</td>
-                                <td className="py-4 lg:py-5 opacity-80 group-hover:opacity-100 transition-opacity">{held}</td>
-                                <td className="py-4 lg:py-5 text-secondary opacity-80 group-hover:opacity-100 transition-opacity">{req}</td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <button 
+                    onClick={start}
+                    disabled={isPlaying || isDeadlocked}
+                    className="btn-primary flex items-center justify-center gap-2 h-14"
+                  >
+                    <Play className="w-4 h-4" /> Run
+                  </button>
+                  <button 
+                    onClick={reset}
+                    className="btn-ghost flex items-center justify-center gap-2 h-14"
+                  >
+                    <RotateCcw className="w-4 h-4" /> Reset
+                  </button>
                 </div>
               </div>
             </div>
 
-            <div className="hyper-card p-8 lg:p-12 bg-primary/5 border border-primary/20 rounded-[32px] lg:rounded-[48px] relative overflow-hidden group shadow-3xl shadow-primary/5">
-               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none" />
-               <h4 className="text-[11px] lg:text-[12px] font-black text-primary uppercase tracking-[0.6em] mb-8 lg:mb-10 flex items-center gap-4 italic opacity-80">
-                  <Cpu className="w-5 h-5 shadow-[0_0_15px_#FF6700]" />
-                  Kernel Spec
-               </h4>
-               <ul className="space-y-4 lg:space-y-6 text-sm lg:text-base text-white/80 font-black italic relative z-10">
-                  <li className="flex justify-between items-center border-b border-white/5 pb-4 tracking-tighter">
-                    <span className="text-white/50 uppercase text-[11px] lg:text-[12px] tracking-[0.3em]">Concurrency</span>
-                    <span className="text-white uppercase text-[12px] lg:text-base">Active_Load</span>
-                  </li>
-                  <li className="flex justify-between items-center border-b border-white/5 pb-4 tracking-tighter">
-                    <span className="text-white/50 uppercase text-[11px] lg:text-[12px] tracking-[0.3em]">Preemption</span>
-                    <span className="text-secondary uppercase text-[12px] lg:text-base">Surgical_Lock</span>
-                  </li>
-                  <li className="flex justify-between items-center tracking-tighter">
-                    <span className="text-white/50 uppercase text-[11px] lg:text-[12px] tracking-[0.3em]">Logic_Hub</span>
-                    <span className="text-white uppercase text-[12px] lg:text-base">Hyper_OS_v4</span>
-                  </li>
-               </ul>
+            {/* System Log */}
+            <div className="glass-panel p-6 bg-[#050a10]/50 h-[300px] flex flex-col">
+              <div className="flex items-center gap-2 mb-4">
+                <Terminal className="w-4 h-4 text-primary" />
+                <span className="text-[10px] uppercase font-bold tracking-widest text-[#6a8099]">Kernel Diagnostics</span>
+              </div>
+              <div className="flex-1 font-mono text-[11px] space-y-2 overflow-y-auto custom-scrollbar">
+                {logs.map((log, i) => (
+                  <div key={i} className="flex gap-4">
+                    <span className="text-[#6a8099] opacity-30">[{log.time}]</span>
+                    <span className={log.type === 'error' ? 'text-secondary font-bold' : log.type === 'warning' ? 'text-[#ffcc44]' : 'text-success'}>
+                      {log.msg}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
+      </div>
     </PageWrapper>
   );
 };

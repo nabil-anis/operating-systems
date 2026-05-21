@@ -350,8 +350,8 @@ const Detect: React.FC = () => {
 
       ctx.clearRect(0, 0, W, H);
       
-      // Cyber City grid line scan overlay
-      ctx.strokeStyle = 'rgba(0, 212, 255, 0.02)';
+      // Crisp subtle light grid lines overlay
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.03)';
       ctx.lineWidth = 1;
       for (let x = 0; x < W; x += 30) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
       for (let y = 0; y < H; y += 30) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
@@ -369,8 +369,8 @@ const Detect: React.FC = () => {
         ctx.strokeStyle = color;
         ctx.lineWidth = isCycleEdge ? 3.5 : 2;
         if (isCycleEdge) {
-          ctx.shadowBlur = 15;
-          ctx.shadowColor = '#ff3b3b';
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = 'rgba(255, 59, 48, 0.4)';
         }
         if (dash) ctx.setLineDash([6, 4]);
         ctx.beginPath();
@@ -397,14 +397,14 @@ const Detect: React.FC = () => {
         if (!fromNode || !toNode) return;
 
         const isCycleEdge = cycleKeys.has(`${edge.from}->${edge.to}`);
-        let edgeColor = 'rgba(0, 212, 255, 0.45)';
+        let edgeColor = 'rgba(0, 113, 227, 0.5)'; // System Blue
         
         if (isCycleEdge) {
-          edgeColor = '#ff3b3b';
+          edgeColor = '#ff3b30'; // System Red
         } else if (edge.type === 'holds') {
-          edgeColor = '#00e676';
+          edgeColor = '#34c759'; // System Green
         } else if (edge.type === 'requests') {
-          edgeColor = '#ffb300';
+          edgeColor = '#ff9500'; // System Orange
         }
 
         const angle = Math.atan2(toNode.y - fromNode.y, toNode.x - fromNode.x);
@@ -424,9 +424,9 @@ const Detect: React.FC = () => {
 
         ctx.save();
         
-        // Dynamic node glows
-        ctx.shadowBlur = inCycle ? 18 : (selectedNodeId === node.id ? 12 : 6);
-        ctx.shadowColor = inCycle ? '#ff3b3b' : (selectedNodeId === node.id ? '#ffffff' : (node.color || '#7c6ff7'));
+        // Fine micro shadow
+        ctx.shadowBlur = inCycle ? 12 : (selectedNodeId === node.id ? 10 : 4);
+        ctx.shadowColor = inCycle ? 'rgba(255, 59, 48, 0.3)' : (selectedNodeId === node.id ? 'rgba(0, 113, 227, 0.25)' : 'rgba(0, 0, 0, 0.05)');
 
         ctx.beginPath();
         if (isProcess) {
@@ -440,14 +440,14 @@ const Detect: React.FC = () => {
           ctx.closePath();
         }
 
-        ctx.fillStyle = 'rgba(7, 13, 23, 0.95)';
+        ctx.fillStyle = '#ffffff';
         ctx.fill();
 
-        let strokeColor = node.color || '#7c6ff7';
+        let strokeColor = node.color || '#5856d6'; // Indigo default, like System Accent
         if (inCycle) {
-          strokeColor = '#ff3b3b';
+          strokeColor = '#ff3b30'; // System Red
         } else if (selectedNodeId === node.id) {
-          strokeColor = '#ffffff';
+          strokeColor = '#0071e3'; // System Blue
         }
         ctx.strokeStyle = strokeColor;
         ctx.lineWidth = (selectedNodeId === node.id || inCycle) ? 3 : 2;
@@ -455,13 +455,13 @@ const Detect: React.FC = () => {
         ctx.restore();
 
         // Label details inside shape
-        ctx.fillStyle = inCycle ? '#ff3b3b' : (selectedNodeId === node.id ? '#ffffff' : strokeColor);
-        ctx.font = 'bold 11px Sora';
+        ctx.fillStyle = inCycle ? '#ff3b30' : (selectedNodeId === node.id ? '#0071e3' : '#1d1d1f');
+        ctx.font = 'bold 11px Inter';
         ctx.textAlign = 'center';
         ctx.fillText(node.id, node.x, node.y + 4);
         
-        ctx.fillStyle = '#6a8099';
-        ctx.font = '8px Sora';
+        ctx.fillStyle = '#515154';
+        ctx.font = '8px Inter';
         ctx.fillText(isProcess ? 'PROCESS' : 'RESOURCE', node.x, node.y + 36);
       });
     };
@@ -480,13 +480,13 @@ const Detect: React.FC = () => {
         
         {/* Page Titles */}
         <div className="mb-10 space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary font-mono text-[9px] font-bold tracking-widest uppercase mb-2">
-            GRID PROMPT PROTOCOL // DETECT-FIX.EXE
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/[0.04] border border-primary/20 text-primary font-mono text-[9px] font-bold tracking-widest uppercase mb-2">
+            GRID PROMPT PROTOCOL // DETECT-FIX
           </div>
-          <h1 className="text-white text-3xl font-display font-black tracking-tight uppercase italic leading-none">
-            RAG DIAGNOSTICS & FIX LABORATORY
+          <h1 className="text-[#1d1d1f] text-3xl font-bold tracking-tight leading-none">
+            RAG Diagnostics & Fix Laboratory
           </h1>
-          <p className="text-[#6a8099] text-xs max-w-2xl">
+          <p className="text-[#86868b] text-xs max-w-2xl">
             Build and analyze real-time Resource Allocation Graphs (RAG) to detect circular holding loops, or edit Banker's Matrix rows to compute multi-variable safety paths dynamically.
           </p>
         </div>
@@ -495,10 +495,10 @@ const Detect: React.FC = () => {
           
           {/* LEFT: Main Workspace */}
           <div className="lg:col-span-8 space-y-6">
-            <div className="glass-panel p-1 border-border-dim overflow-hidden relative">
+            <div className="glass-panel p-1 border-border-dim/50 overflow-hidden bg-white relative">
               <div className="absolute top-4 left-6 flex items-center gap-3 z-10 pointer-events-none">
                 <Network className="w-5 h-5 text-primary" />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-[#6a8099]">Interactive RAG Grid Canvas</span>
+                <span className="text-[10px] font-semibold uppercase tracking-widest text-[#515154]">Interactive RAG Grid Canvas</span>
               </div>
               <div className="absolute top-4 right-6 pointer-events-none z-10">
                 <span className={`text-[10px] font-bold uppercase tracking-widest ${isDeadlocked ? 'text-secondary animate-pulse' : 'text-success'}`}>
@@ -509,7 +509,7 @@ const Detect: React.FC = () => {
               <canvas 
                 ref={canvasRef}
                 height={360}
-                className="w-full bg-[#050a10]/50 block border-b border-border-dim/20"
+                className="w-full bg-white block border-b border-border-dim/20"
                 onClick={(e) => {
                   const canvas = canvasRef.current;
                   if (!canvas) return;
@@ -528,30 +528,30 @@ const Detect: React.FC = () => {
               />
 
               {/* Canvas Controls Menu Frame */}
-              <div className="p-4 bg-black/40 xl:flex items-center justify-between gap-4 flex-wrap grid grid-cols-1 sm:grid-cols-2">
+              <div className="p-4 bg-neutral-50/90 xl:flex items-center justify-between gap-4 flex-wrap grid grid-cols-1 sm:grid-cols-2 border-t border-border-dim/20">
                 <div className="flex gap-2">
-                  <button onClick={addProcess} className="px-4 py-2.5 rounded-xl bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 font-bold text-[10px] uppercase tracking-widest transition-all flex items-center gap-2">
+                  <button onClick={addProcess} className="px-4 py-2.5 rounded-xl bg-primary/[0.04] border border-primary/20 text-primary hover:bg-primary/[0.08] font-semibold text-[10px] uppercase tracking-wider transition-all flex items-center gap-2">
                     <Plus className="w-3.5 h-3.5" /> + Process
                   </button>
-                  <button onClick={addResource} className="px-4 py-2.5 rounded-xl bg-accent/10 border border-accent/20 text-accent hover:bg-accent/20 font-bold text-[10px] uppercase tracking-widest transition-all flex items-center gap-2">
+                  <button onClick={addResource} className="px-4 py-2.5 rounded-xl bg-accent/[0.04] border border-accent/20 text-accent hover:bg-accent/[0.08] font-semibold text-[10px] uppercase tracking-wider transition-all flex items-center gap-2">
                     <Plus className="w-3.5 h-3.5" /> + Resource
                   </button>
                 </div>
                 
-                <div className="flex gap-1.5 items-center bg-black/50 p-1 border border-border-dim rounded-xl">
-                  <span className="text-[9px] font-bold text-[#6a8099] uppercase tracking-widest px-2">Presets:</span>
-                  <button onClick={() => loadPreset('simple')} className="px-3 py-1.5 rounded-lg bg-primary/5 hover:bg-primary/10 border border-[#7c6ff7]/10 text-[9px] font-bold text-[#6a8099] hover:text-[#7c6ff7] uppercase transition-all">
+                <div className="flex gap-1.5 items-center bg-white p-1 border border-border-dim/40 rounded-xl">
+                  <span className="text-[9px] font-bold text-[#86868b] uppercase tracking-widest px-2">Presets:</span>
+                  <button onClick={() => loadPreset('simple')} className="px-3 py-1.5 rounded-lg bg-neutral-50 hover:bg-neutral-100 border border-neutral-200 text-[9px] font-semibold text-[#515154] hover:text-[#1d1d1f] uppercase transition-all">
                     2-Way Loop
                   </button>
-                  <button onClick={() => loadPreset('multi')} className="px-3 py-1.5 rounded-lg bg-primary/5 hover:bg-primary/10 border border-[#7c6ff7]/10 text-[9px] font-bold text-[#6a8099] hover:text-[#7c6ff7] uppercase transition-all">
+                  <button onClick={() => loadPreset('multi')} className="px-3 py-1.5 rounded-lg bg-neutral-50 hover:bg-neutral-100 border border-neutral-200 text-[9px] font-semibold text-[#515154] hover:text-[#1d1d1f] uppercase transition-all">
                     3-Way Loop
                   </button>
-                  <button onClick={() => loadPreset('nominal')} className="px-3 py-1.5 rounded-lg bg-primary/5 hover:bg-primary/10 border border-border-dim/20 text-[9px] font-bold text-[#6a8099] hover:text-white uppercase transition-all">
+                  <button onClick={() => loadPreset('nominal')} className="px-3 py-1.5 rounded-lg bg-neutral-50 hover:bg-neutral-100 border border-neutral-200 text-[9px] font-semibold text-[#515154] hover:text-[#1d1d1f] uppercase transition-all">
                     No-Loop Healthy
                   </button>
                 </div>
 
-                <button onClick={() => { setNodes([]); setEdges([]); setLogs([]); setFixExplanation(null); }} className="px-4 py-2.5 rounded-xl border border-secondary/30 text-secondary hover:bg-secondary/10 font-bold text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2">
+                <button onClick={() => { setNodes([]); setEdges([]); setLogs([]); setFixExplanation(null); }} className="px-4 py-2.5 rounded-xl border border-secondary/30 text-secondary hover:bg-secondary/[0.04] font-semibold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2">
                   <Trash2 className="w-3.5 h-3.5" /> Clear Map
                 </button>
               </div>
@@ -564,7 +564,7 @@ const Detect: React.FC = () => {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 15 }}
-                  className="glass-panel p-6 border-secondary/30 bg-secondary/[0.02] space-y-4"
+                  className="glass-panel p-6 border-secondary/30 bg-white space-y-4 shadow-sm"
                 >
                   <div className="flex items-center gap-2.5 text-secondary font-black text-xs uppercase tracking-widest border-b border-secondary/10 pb-3">
                     <AlertTriangle className="w-4 h-4 animate-ping" /> Dynamic DFS Cycle Path Trace Results
@@ -572,12 +572,12 @@ const Detect: React.FC = () => {
                   
                   <div className="space-y-4">
                     {activeCycles.map((path, idx) => (
-                      <div key={idx} className="bg-black/30 p-4 rounded-xl border border-secondary/10 space-y-2">
+                      <div key={idx} className="bg-secondary/[0.03] p-4 rounded-xl border border-secondary/20 space-y-2">
                         <div className="font-mono text-[10.5px] font-black text-secondary uppercase tracking-widest">
                           ⚡ CYCLE DETECTED #{idx + 1}: {path.join(' ──➔ ')}
                         </div>
-                        <p className="text-[#a0afca] text-[10.5px] leading-relaxed">
-                          Process <span className="text-white font-bold">{path[0]}</span> requests Resource <span className="text-white font-bold">{path[1]}</span>, which is currently held by Process <span className="text-white font-bold">{path[2]}</span>. This creates a circular dependancy.
+                        <p className="text-[#515154] text-[11px] leading-relaxed">
+                          Process <span className="text-[#1d1d1f] font-mono font-bold">{path[0]}</span> requests Resource <span className="text-[#1d1d1f] font-mono font-bold">{path[1]}</span>, which is currently held by Process <span className="text-[#1d1d1f] font-mono font-bold">{path[2]}</span>. This creates a circular dependancy.
                         </p>
                       </div>
                     ))}
@@ -591,10 +591,10 @@ const Detect: React.FC = () => {
                       { cond: 'No Preemption', icon: AlertTriangle, status: 'Active (Cannot Force)' },
                       { cond: 'Circular Wait', icon: Network, status: 'Active (Deadlocked Loop)' },
                     ].map((item, i) => (
-                      <div key={i} className="p-3 bg-black/50 border border-border-dim rounded-xl space-y-1">
+                      <div key={i} className="p-3 bg-neutral-50 border border-neutral-200/60 rounded-xl space-y-1">
                         <div className="flex items-center gap-1.5">
                           <item.icon className="w-3.5 h-3.5 text-secondary" />
-                          <span className="text-[9px] font-bold text-white uppercase tracking-wider">{item.cond}</span>
+                          <span className="text-[9px] font-bold text-[#1d1d1f] uppercase tracking-wider">{item.cond}</span>
                         </div>
                         <div className="text-[8.5px] font-mono text-secondary uppercase font-semibold">{item.status}</div>
                       </div>
@@ -603,17 +603,17 @@ const Detect: React.FC = () => {
 
                   {/* INTERACTIVE SOLVING ACTION DECKS */}
                   <div className="pt-2 border-t border-secondary/10 space-y-3">
-                    <div className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">
+                    <div className="text-[10px] font-bold text-[#515154] uppercase tracking-widest">
                       // Select an interactive fixing routine to dismantle the cycle:
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       
                       {/* FIX OPTION 1: TERMINATION LIST */}
-                      <div className="p-4 bg-black/40 border border-border-dim rounded-xl space-y-3">
-                        <div className="text-[9.5px] font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                      <div className="p-4 bg-neutral-50 border border-neutral-200/80 rounded-xl space-y-3">
+                        <div className="text-[9.5px] font-bold text-[#1d1d1f] uppercase tracking-wider flex items-center gap-2">
                           <Zap className="w-3.5 h-3.5 text-secondary" /> Prune Process Core (Abortion)
                         </div>
-                        <p className="text-[10px] text-[#6a8099]">Terminate one system component to instantly recall safety tokens:</p>
+                        <p className="text-[10px] text-[#515154]">Terminate one system component to instantly recall safety tokens:</p>
                         <div className="flex gap-2 flex-wrap">
                           {nodes.filter(n => n.type === 'process').map(p => (
                             <button
@@ -628,11 +628,11 @@ const Detect: React.FC = () => {
                       </div>
 
                       {/* FIX OPTION 2: PREEMPTION SELECTOR */}
-                      <div className="p-4 bg-black/40 border border-border-dim rounded-xl space-y-3">
-                        <div className="text-[9.5px] font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                      <div className="p-4 bg-neutral-50 border border-neutral-200/80 rounded-xl space-y-3">
+                        <div className="text-[9.5px] font-bold text-[#1d1d1f] uppercase tracking-wider flex items-center gap-2">
                           <Cpu className="w-3.5 h-3.5 text-primary" /> Forced Preemption Shift
                         </div>
-                        <p className="text-[10px] text-[#6a8099]">Forcibly swap resource lock from cycle process to waiting thread:</p>
+                        <p className="text-[10px] text-[#515154]">Forcibly swap resource lock from cycle process to waiting thread:</p>
                         <div className="space-y-1.5 max-h-[100px] overflow-y-auto custom-scrollbar">
                           {/* Dynamically search for preemptable holds in RAG */}
                           {(() => {
@@ -650,14 +650,14 @@ const Detect: React.FC = () => {
                             });
 
                             if (holdsInCycle.length === 0) {
-                              return <div className="text-[9.5px] text-[#6a8099] italic">No active hold/request combinations.</div>;
+                              return <div className="text-[9.5px] text-[#515154] italic">No active hold/request combinations.</div>;
                             }
 
                             return holdsInCycle.map((h, i) => (
                               <button
                                 key={i}
                                 onClick={() => handlePreemptResourceFromCycle(h.rId, h.owner, h.requestor)}
-                                className="w-full text-left px-3 py-2 rounded bg-primary/5 hover:bg-primary/10 border border-primary/20 text-[9.5px] font-mono font-bold text-primary flex justify-between items-center transition-all"
+                                className="w-full text-left px-3 py-2 rounded bg-primary/[0.03] hover:bg-primary/[0.08] border border-primary/20 text-[9.5px] font-mono font-bold text-primary flex justify-between items-center transition-all"
                               >
                                 <span>Preempt {h.rId} from {h.owner} ➔ {h.requestor}</span>
                                 <RefreshCw className="w-3 h-3 text-primary" />
@@ -686,22 +686,22 @@ const Detect: React.FC = () => {
                   <div className="flex items-center gap-2 text-success font-black text-xs uppercase tracking-wider">
                     <CheckCircle2 className="w-4 h-4 text-success" /> RESOLUTION SYSTEM REPORT
                   </div>
-                  <p className="text-[#a0afca] text-[11px] leading-relaxed font-sans">{fixExplanation}</p>
+                  <p className="text-[#515154] text-[11px] leading-relaxed font-sans">{fixExplanation}</p>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            <div className="glass-panel p-6">
+            <div className="glass-panel p-6 bg-white shadow-sm">
               <div className="flex items-center gap-3 mb-4">
                 <History className="w-4 h-4 text-primary" />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-[#6a8099]">RAG Graph Connection History</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#515154]">RAG Graph Connection History</span>
               </div>
               <div className="font-mono text-[11px] space-y-2 max-h-[100px] overflow-y-auto custom-scrollbar">
-                {logs.length === 0 && <div className="text-[#6a8099] italic">Ready for input. Connect a Process (ID P) to a Resource (ID R) to map topology.</div>}
+                {logs.length === 0 && <div className="text-[#515154] italic">Ready for input. Connect a Process (ID P) to a Resource (ID R) to map topology.</div>}
                 {logs.map((log, i) => (
                   <div key={i} className="flex gap-4">
-                    <span className="text-[#6a8099] opacity-40">[{log.time}]</span>
-                    <span className={log.type === 'error' ? 'text-secondary' : log.type === 'success' ? 'text-success' : 'text-primary'}>
+                    <span className="text-neutral-400">[{log.time}]</span>
+                    <span className={log.type === 'error' ? 'text-secondary font-semibold' : log.type === 'success' ? 'text-success font-semibold' : 'text-primary'}>
                       {log.msg}
                     </span>
                   </div>
@@ -717,13 +717,13 @@ const Detect: React.FC = () => {
 
           {/* RIGHT: Algorithm Playground */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="glass-panel p-6">
+            <div className="glass-panel p-6 bg-white shadow-sm">
               <div className="flex gap-2 mb-8 border-b border-border-dim/20 pb-4">
                 {(['banker', 'prevention', 'recovery'] as const).map(tab => (
                   <button 
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`flex-1 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${activeTab === tab ? 'bg-primary/10 text-primary border border-primary/20 shadow-md' : 'text-[#6a8099] border border-transparent'}`}
+                    className={`flex-1 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${activeTab === tab ? 'bg-primary/[0.04] text-primary border border-primary/20 shadow-sm font-semibold' : 'text-[#86868b] border border-transparent hover:text-[#1d1d1f] font-semibold'}`}
                   >
                     {tab}
                   </button>
@@ -733,14 +733,14 @@ const Detect: React.FC = () => {
               {activeTab === 'banker' && (
                 <div className="space-y-6">
                   <div className="space-y-1">
-                    <h3 className="text-white font-bold text-xs uppercase tracking-wider">// Banker's Safety Engine</h3>
-                    <p className="text-[10.5px] text-[#6a8099] leading-relaxed">
+                    <h3 className="text-[#1d1d1f] font-bold text-xs uppercase tracking-wider">// Banker's Safety Engine</h3>
+                    <p className="text-[10.5px] text-[#515154] leading-relaxed">
                       Toggle total Max Deficit allocations. The Banker checks if allocating resources keeps the grid system in a mathematically safe trace sequence. Total City Pool = 8.
                     </p>
                   </div>
 
                   <table className="w-full text-left text-[11px]">
-                    <thead className="text-[#6a8099] border-b border-border-dim">
+                    <thead className="text-[#515154] border-b border-border-dim/30">
                       <tr>
                         <th className="pb-3 px-1 font-bold">CORE</th>
                         <th className="pb-3 px-1 font-bold">ALLOC</th>
@@ -748,15 +748,15 @@ const Detect: React.FC = () => {
                         <th className="pb-3 px-0.5 font-bold">DEFICIT (NEED)</th>
                       </tr>
                     </thead>
-                    <tbody className="text-[#e0eaf5]">
+                    <tbody className="text-[#1d1d1f]">
                       {bankerData.map((row, i) => (
-                        <tr key={i} className="border-b border-border-dim/5">
-                          <td className="py-3 px-1 font-bold text-white">{row.p}</td>
-                          <td className="py-3 px-1 font-mono text-[#00d4ff]">{row.alloc}</td>
+                        <tr key={i} className="border-b border-border-dim/10">
+                          <td className="py-3 px-1 font-bold text-[#1d1d1f]">{row.p}</td>
+                          <td className="py-3 px-1 font-mono text-[#0071e3] font-semibold">{row.alloc}</td>
                           <td className="py-3 px-1">
                             <input 
                               type="number" 
-                              className="w-12 bg-primary/5 border border-border-dim/50 rounded-lg p-1 text-center font-mono outline-none text-white focus:border-primary/80"
+                              className="w-12 bg-neutral-50 border border-neutral-200 rounded-lg p-1 text-center font-mono outline-none text-[#1d1d1f] focus:border-primary/80"
                               value={row.max}
                               onChange={(e) => {
                                 const val = parseInt(e.target.value) || 0;
@@ -784,7 +784,7 @@ const Detect: React.FC = () => {
                         animate={{ opacity: 1, y: 0 }}
                         className={`p-4 rounded-xl border ${bankerResult.safe ? 'bg-success/5 border-success/20 text-success' : 'bg-secondary/5 border-secondary/20 text-secondary'}`}
                       >
-                        <div className="text-[10px] uppercase font-bold tracking-widest mb-1">Verdict Result: {bankerResult.safe ? 'Safe' : 'Unsafe Warning'}</div>
+                        <div className="text-[10px] uppercase font-bold tracking-widest mb-1 font-semibold">Verdict Result: {bankerResult.safe ? 'Safe' : 'Unsafe Warning'}</div>
                         <div className="text-[10.5px] font-bold">
                           {bankerResult.safe 
                             ? `Safe Sequence Found: ${bankerResult.seq.join(' ──➔ ')}` 
@@ -800,20 +800,20 @@ const Detect: React.FC = () => {
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
-                        className="p-4 bg-black/40 border border-border-dim rounded-xl max-h-[240px] overflow-y-auto custom-scrollbar space-y-2.5"
+                        className="p-4 bg-neutral-100/90 border border-neutral-200/60 rounded-xl max-h-[240px] overflow-y-auto custom-scrollbar space-y-2.5"
                       >
-                        <div className="text-[9px] text-[#6a8099] font-black uppercase tracking-widest border-b border-border-dim/20 pb-2 flex items-center gap-2">
+                        <div className="text-[9px] text-[#515154] font-black uppercase tracking-widest border-b border-border-dim/20 pb-2 flex items-center gap-2">
                           <Terminal className="w-3.5 h-3.5 text-primary animate-pulse" /> Banker's Kernal Tracing Logs
                         </div>
-                        <div className="space-y-1.5 font-mono text-[9.5px] text-[#a0afca]">
+                        <div className="space-y-1.5 font-mono text-[9.5px] text-[#1d1d1f]">
                           {bankerSteps.map((stepMsg, stepIdx) => {
                             const isHeader = stepMsg.startsWith('[System') || stepMsg.startsWith('[Iteration') || stepMsg.startsWith('[VERDICT');
                             const isSuccess = stepMsg.includes('✓');
                             const isDanger = stepMsg.includes('❌') || stepMsg.includes('DEADLOCK');
-                            let color = 'text-slate-400';
-                            if (isHeader) color = 'text-primary font-bold mt-2';
-                            if (isSuccess) color = 'text-[#00e676]';
-                            if (isDanger) color = 'text-secondary';
+                            let color = 'text-neutral-600';
+                            if (isHeader) color = 'text-primary font-semibold mt-2';
+                            if (isSuccess) color = 'text-[#34c759] font-semibold';
+                            if (isDanger) color = 'text-secondary font-semibold';
                             
                             return (
                               <div key={stepIdx} className={`${color} pl-2 border-l border-border-dim/20 leading-relaxed`}>
@@ -831,8 +831,8 @@ const Detect: React.FC = () => {
               {activeTab === 'prevention' && (
                 <div className="space-y-4">
                   <div className="space-y-1">
-                    <h3 className="text-white font-bold text-xs uppercase tracking-wider">// Coffman Prevention Protocols</h3>
-                    <p className="text-[10.5px] text-[#6a8099]">Prevent deadlocks from ever initiating by strictly neutralizing at least one Coffman condition pre-execution:</p>
+                    <h3 className="text-[#1d1d1f] font-bold text-xs uppercase tracking-wider">// Coffman Prevention Protocols</h3>
+                    <p className="text-[10.5px] text-[#515154]">Prevent deadlocks from ever initiating by strictly neutralizing at least one Coffman condition pre-execution:</p>
                   </div>
 
                   {[
@@ -841,12 +841,12 @@ const Detect: React.FC = () => {
                     { icon: AlertTriangle, title: 'Forced Resource Preemption', desc: 'If a thread holding allocations requests more locks but gets blocked, it must release all its held items to the general pool.' },
                     { icon: Network, title: 'Strict Linear Hierarchy', desc: 'Resource request indexes are strictly ordered ascending. Threads can only claim larger IDs than they currently hold.' }
                   ].map((item, i) => (
-                    <div key={i} className="p-4 border border-border-dim bg-primary/[0.01] rounded-xl space-y-1">
+                    <div key={i} className="p-4 border border-neutral-200 bg-white rounded-xl space-y-1 shadow-sm">
                       <div className="flex items-center gap-2">
                         <item.icon className="w-3.5 h-3.5 text-primary" />
-                        <h4 className="text-[10.5px] font-bold text-white">{item.title}</h4>
+                        <h4 className="text-[10.5px] font-bold text-[#1d1d1f]">{item.title}</h4>
                       </div>
-                      <p className="text-[10px] text-[#6a8099] leading-relaxed">{item.desc}</p>
+                      <p className="text-[10px] text-[#515154] leading-relaxed">{item.desc}</p>
                     </div>
                   ))}
                 </div>
@@ -855,35 +855,35 @@ const Detect: React.FC = () => {
               {activeTab === 'recovery' && (
                 <div className="space-y-4">
                   <div className="space-y-1">
-                    <h3 className="text-white font-bold text-xs uppercase tracking-wider">// Grid Lock Extraction Console</h3>
-                    <p className="text-[10.5px] text-[#6a8099] leading-relaxed">
+                    <h3 className="text-[#1d1d1f] font-bold text-xs uppercase tracking-wider">// Grid Lock Extraction Console</h3>
+                    <p className="text-[10.5px] text-[#515154] leading-relaxed">
                       Methods implemented by operating system kernels to recover from circular blocks in raw systems:
                     </p>
                   </div>
 
                   <div className="space-y-4 pt-2">
-                    <div className="p-4 bg-secondary/[0.01] border border-secondary/20 rounded-xl space-y-1.5">
+                    <div className="p-4 bg-secondary/[0.03] border border-secondary/20 rounded-xl space-y-1.5 shadow-sm">
                       <div className="flex items-center gap-2">
                         <Zap className="w-3.5 h-3.5 text-secondary animate-pulse" />
-                        <h4 className="text-[11px] font-bold text-secondary uppercase tracking-widest">Process Thread Termination</h4>
+                        <h4 className="text-[11.5px] font-bold text-secondary uppercase tracking-widest">Process Thread Termination</h4>
                       </div>
-                      <p className="text-[10px] text-[#6a8099] leading-relaxed">
+                      <p className="text-[10px] text-[#515154] leading-relaxed">
                         Aborting all deadlocked processes releases resource arrays immediately at a CPU instruction trace penalty, or thread targets are targeted sequentially until safety metrics return.
                       </p>
                     </div>
 
-                    <div className="p-4 bg-primary/[0.01] border border-primary/20 rounded-xl space-y-1.5">
+                    <div className="p-4 bg-primary/[0.03] border border-primary/20 rounded-xl space-y-1.5 shadow-sm">
                       <div className="flex items-center gap-2">
                         <Cpu className="w-3.5 h-3.5 text-primary animate-pulse" />
-                        <h4 className="text-[11px] font-bold text-primary uppercase tracking-widest">Resource Preemption</h4>
+                        <h4 className="text-[11.5px] font-bold text-primary uppercase tracking-widest">Resource Preemption</h4>
                       </div>
-                      <p className="text-[10px] text-[#6a8099] leading-relaxed">
+                      <p className="text-[10px] text-[#515154] leading-relaxed">
                         Forcibly reclaiming allocs from victim process rows allows the kernel to unblock starvation chains with rollback instruction trace saves.
                       </p>
                     </div>
 
-                    <div className="p-3 bg-black/40 border border-border-dim rounded-xl text-center">
-                      <p className="text-[9.5px] text-[#6a8099] italic leading-relaxed">
+                    <div className="p-3 bg-neutral-100/90 border border-neutral-200/60 rounded-xl text-center">
+                      <p className="text-[9.5px] text-[#515154] italic leading-relaxed">
                         💡 Click "Presets" under the RAG Builder to build cyclic holds, then use the live interactive repair buttons to run this core simulation!
                       </p>
                     </div>

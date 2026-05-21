@@ -454,7 +454,7 @@ const Simulator: React.FC = () => {
       ctx.clearRect(0, 0, W, H);
       
       // Grid Overlay Background Design
-      ctx.strokeStyle = 'rgba(0, 212, 255, 0.03)';
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.03)';
       ctx.lineWidth = 1;
       for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
       for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
@@ -511,10 +511,10 @@ const Simulator: React.FC = () => {
           if (rPosIdx === -1) return;
           const rPos = rPositions[rPosIdx];
 
-          let edgeColor = '#00e676'; // Normal healthy resource hold
-          if (isDeadlocked) edgeColor = '#ff3b3b'; // Locked deadlock hold
-          else if (p.status === 'running') edgeColor = '#00e676';
-          else if (p.status === 'completed') edgeColor = 'rgba(0, 230, 118, 0.15)';
+          let edgeColor = '#34c759'; // Apple Green holds
+          if (isDeadlocked) edgeColor = '#ff3b30'; // Apple Red deadlocked
+          else if (p.status === 'running') edgeColor = '#34c759';
+          else if (p.status === 'completed') edgeColor = 'rgba(52, 199, 89, 0.15)';
 
           // Offset positions slightly left on process circle edge & resource diamond edge
           drawArrow(pPos.x - 12, pPos.y + 32, rPos.x - 12, rPos.y - 30, edgeColor, false);
@@ -528,9 +528,9 @@ const Simulator: React.FC = () => {
           if (rPosIdx === -1) return;
           const rPos = rPositions[rPosIdx];
 
-          let edgeColor = '#ffcc44'; // Request state
-          if (isDeadlocked) edgeColor = '#ff5533'; // Crimson deadlock state
-          else if (p.status === 'running') edgeColor = '#00e676';
+          let edgeColor = '#ff9500'; // Apple Orange requests
+          if (isDeadlocked) edgeColor = '#ff3b30'; // Apple Red requests
+          else if (p.status === 'running') edgeColor = '#34c759';
 
           // Offset positions slightly right on diamond bottom & process bottom
           drawArrow(rPos.x + 12, rPos.y - 30, pPos.x + 12, pPos.y + 32, edgeColor, true);
@@ -548,19 +548,19 @@ const Simulator: React.FC = () => {
         ctx.save();
         
         // Glow filters
-        ctx.shadowBlur = isDead ? 20 : (isRun ? 25 : 10);
-        ctx.shadowColor = isAbort ? 'rgba(255, 59, 59, 0.05)' : (isDead ? '#ff3b3b' : (isRun ? '#00e676' : (isComplete ? '#00e676' : p.color)));
+        ctx.shadowBlur = isDead ? 12 : (isRun ? 16 : 8);
+        ctx.shadowColor = isAbort ? 'rgba(0,0,0,0.02)' : (isDead ? 'rgba(255, 59, 48, 0.3)' : (isRun ? 'rgba(52, 199, 89, 0.3)' : 'rgba(0,113,227,0.15)'));
 
         ctx.beginPath();
         ctx.arc(pos.x, pos.y, 35, 0, Math.PI * 2);
-        ctx.fillStyle = isAbort ? 'rgba(10, 15, 25, 0.4)' : 'rgba(5, 10, 16, 0.95)';
+        ctx.fillStyle = isAbort ? '#e5e5e7' : '#ffffff';
         ctx.fill();
 
-        let strokeColor = p.color;
-        if (isDead) strokeColor = '#ff3b3b';
-        else if (isAbort) strokeColor = 'rgba(255, 59, 59, 0.2)';
-        else if (isRun) strokeColor = '#00e676';
-        else if (isComplete) strokeColor = '#00e676';
+        let strokeColor = '#0071e3'; // Default Apple blue process circle border
+        if (isDead) strokeColor = '#ff3b30';
+        else if (isAbort) strokeColor = '#d2d2d7';
+        else if (isRun) strokeColor = '#34c759';
+        else if (isComplete) strokeColor = '#34c759';
 
         ctx.strokeStyle = strokeColor;
         ctx.lineWidth = (isRun || isDead) ? 3 : 2;
@@ -568,13 +568,13 @@ const Simulator: React.FC = () => {
         ctx.restore();
 
         // Inside Text Labels with state-based contrast colors
-        ctx.fillStyle = isAbort ? 'rgba(106, 128, 153, 0.2)' : (isDead ? '#ff3b3b' : (isRun ? '#00e676' : (isComplete ? '#00e676' : p.color)));
-        ctx.font = 'bold 12px Sora';
+        ctx.fillStyle = isAbort ? '#86868b' : (isDead ? '#ff3b30' : (isRun ? '#34c759' : (isComplete ? '#34c759' : '#1d1d1f')));
+        ctx.font = 'bold 12px Inter';
         ctx.textAlign = 'center';
         ctx.fillText(p.id, pos.x, pos.y - 5);
 
-        ctx.fillStyle = isAbort ? 'rgba(106, 128, 153, 0.15)' : '#6a8099';
-        ctx.font = '9px Sora';
+        ctx.fillStyle = isAbort ? '#86868b' : '#515154';
+        ctx.font = '9px Inter';
         ctx.fillText(isAbort ? 'SIGKILL ABORT' : (isComplete ? 'COMPLETED ✓' : p.name), pos.x, pos.y + 10);
       });
 
@@ -586,8 +586,8 @@ const Simulator: React.FC = () => {
         const hostProc = isHeld ? currentProcs.find(p => p.id === r.heldBy) : null;
 
         ctx.save();
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = (isDeadlocked && isHeld) ? '#ff3b3b' : '#7c6ff7';
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = (isDeadlocked && isHeld) ? 'rgba(255, 59, 48, 0.2)' : 'rgba(88, 86, 214, 0.2)';
 
         ctx.beginPath();
         ctx.moveTo(pos.x, pos.y - size);
@@ -596,13 +596,13 @@ const Simulator: React.FC = () => {
         ctx.lineTo(pos.x - size, pos.y);
         ctx.closePath();
         
-        ctx.fillStyle = 'rgba(5, 10, 16, 0.95)';
+        ctx.fillStyle = '#ffffff';
         ctx.fill();
 
-        let strokeColor = '#7c6ff7';
-        if (isDeadlocked && isHeld) strokeColor = '#ff3b3b';
-        else if (hostProc?.status === 'running') strokeColor = '#00e676';
-        else if (hostProc?.status === 'completed') strokeColor = 'rgba(124, 111, 247, 0.3)';
+        let strokeColor = '#5856d6'; // Default Apple indigo resource border
+        if (isDeadlocked && isHeld) strokeColor = '#ff3b30';
+        else if (hostProc?.status === 'running') strokeColor = '#34c759';
+        else if (hostProc?.status === 'completed') strokeColor = 'rgba(88, 86, 214, 0.3)';
 
         ctx.strokeStyle = strokeColor;
         ctx.lineWidth = 2;
@@ -614,8 +614,8 @@ const Simulator: React.FC = () => {
         ctx.textAlign = 'center';
         ctx.fillText(r.id, pos.x, pos.y - 4);
         
-        ctx.fillStyle = '#6a8099';
-        ctx.font = '8px Sora';
+        ctx.fillStyle = '#515154';
+        ctx.font = '8px Inter';
         ctx.fillText(r.name, pos.x, pos.y + 45);
       });
 
@@ -783,7 +783,7 @@ const Simulator: React.FC = () => {
 
               <canvas 
                 ref={canvasRef}
-                className="w-full bg-[#050a10]/50 block"
+                className="w-full bg-white block"
                 style={{ height: '390px' }}
               />
             </div>
@@ -795,7 +795,7 @@ const Simulator: React.FC = () => {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -15 }}
-                  className="glass-panel p-8 border-secondary/30 bg-secondary/[0.03] space-y-6 relative overflow-hidden"
+                  className="glass-panel p-8 border-secondary/30 bg-white space-y-6 relative overflow-hidden shadow-sm"
                 >
                   <div className="absolute top-0 right-0 p-8 opacity-5"><ZapOff className="w-32 h-32 text-secondary" /></div>
                   
@@ -804,23 +804,23 @@ const Simulator: React.FC = () => {
                       <div className="text-secondary font-black text-xs uppercase tracking-[0.2em] flex items-center gap-2">
                         <AlertCircle className="w-4 h-4 animate-pulse" /> EMERGENCY SYSTEM RESOLVER PROTOCOL
                       </div>
-                      <p className="text-[#6a8099] text-[11px] mt-1">
+                      <p className="text-[#515154] text-[11px] mt-1">
                         {isRecovering ? 'Actively restructuring resource registry...' : 'The smart city grid has entered a circular wait loop. Select a recovery strategy below to break the cycle.'}
                       </p>
                     </div>
                     
                     {/* Recovery Action Toggle Tabs */}
                     {!isRecovering && (
-                      <div className="flex bg-black/40 border border-border-dim rounded-xl p-1 shrink-0">
+                      <div className="flex bg-neutral-100/90 border border-neutral-200/60 rounded-xl p-1 shrink-0">
                         <button 
                           onClick={() => setRecoveryMode('terminate')}
-                          className={`px-4 py-2 rounded-lg text-[9px] font-bold uppercase tracking-widest transition-all ${recoveryMode === 'terminate' ? 'bg-secondary text-white shadow-lg' : 'text-[#6a8099] hover:text-white'}`}
+                          className={`px-4 py-2 rounded-lg text-[9px] font-bold uppercase tracking-widest transition-all ${recoveryMode === 'terminate' ? 'bg-secondary text-white shadow-sm' : 'text-[#86868b] hover:text-[#1d1d1f]'}`}
                         >
                           Termination
                         </button>
                         <button 
                           onClick={() => setRecoveryMode('preempt')}
-                          className={`px-4 py-2 rounded-lg text-[9px] font-bold uppercase tracking-widest transition-all ${recoveryMode === 'preempt' ? 'bg-accent/80 text-white shadow-lg' : 'text-[#6a8099] hover:text-white'}`}
+                          className={`px-4 py-2 rounded-lg text-[9px] font-bold uppercase tracking-widest transition-all ${recoveryMode === 'preempt' ? 'bg-accent/85 text-white shadow-sm' : 'text-[#86868b] hover:text-[#1d1d1f]'}`}
                         >
                           Preemption
                         </button>
@@ -836,26 +836,26 @@ const Simulator: React.FC = () => {
                         <Zap className="w-6 h-6 text-accent absolute animate-pulse text-primary" />
                       </div>
                       <div className="space-y-1">
-                        <h4 className="text-white font-bold text-sm tracking-wide uppercase">// Executing Recovery Routine</h4>
-                        <p className="text-[#6a8099] font-mono text-xs max-w-lg mt-1 animate-pulse">{recoveryLog || 'Running dispatcher cascade...'}</p>
+                        <h4 className="text-[#1d1d1f] font-bold text-sm tracking-wide uppercase">// Executing Recovery Routine</h4>
+                        <p className="text-[#515154] font-mono text-xs max-w-lg mt-1 animate-pulse">{recoveryLog || 'Running dispatcher cascade...'}</p>
                       </div>
                     </div>
                   ) : recoveryMode === 'terminate' ? (
                     <div className="space-y-4">
-                      <div className="text-white font-bold text-xs uppercase tracking-wider">// Terminate System Thread</div>
-                      <p className="text-slate-400 text-xs">Aborting a thread completely frees up the resource keys it currently locks. Choose a target component registry to terminate:</p>
+                      <div className="text-[#1d1d1f] font-bold text-xs uppercase tracking-wider">// Terminate System Thread</div>
+                      <p className="text-[#515154] text-xs">Aborting a thread completely frees up the resource keys it currently locks. Choose a target component registry to terminate:</p>
                       <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 pt-2">
                         {currentProcs.filter(p => p.status !== 'aborted' && p.status !== 'completed').map((p) => (
                           <button 
                             key={p.id}
                             onClick={() => handleTerminateProcess(p.id)}
-                            className="p-4 rounded-xl border border-secondary/20 bg-secondary/5 text-left transition-all hover:bg-secondary/15 hover:border-secondary group relative animate-pulse"
+                            className="p-4 rounded-xl border border-secondary/20 bg-secondary/[0.03] text-left transition-all hover:bg-secondary/[0.08] hover:border-secondary group relative animate-pulse"
                           >
                             <span className="absolute top-2 right-2 text-[9px] font-mono text-secondary px-2 py-0.5 rounded bg-secondary/10 uppercase font-black">LOCKS: {p.holds.length}</span>
                             <div className="flex items-center gap-3">
                               <Trash2 className="w-4 h-4 text-secondary group-hover:scale-110 transition-transform" />
                               <div>
-                                <h4 className="text-white font-bold text-xs">{p.id} - {p.name}</h4>
+                                <h4 className="text-[#1d1d1f] font-bold text-xs">{p.id} - {p.name}</h4>
                                 <p className="text-slate-500 text-[10px] uppercase font-bold tracking-widest mt-0.5 font-sans">Purge Core</p>
                               </div>
                             </div>
@@ -865,8 +865,8 @@ const Simulator: React.FC = () => {
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      <div className="text-white font-bold text-xs uppercase tracking-wider">// Forcibly Preempt Resource Access</div>
-                      <p className="text-slate-400 text-xs">Forcibly strip ownership of a resource from its currently locked owner and reallocate it directly to its waiting requester:</p>
+                      <div className="text-[#1d1d1f] font-bold text-xs uppercase tracking-wider">// Forcibly Preempt Resource Access</div>
+                      <p className="text-[#515154] text-xs">Forcibly strip ownership of a resource from its currently locked owner and reallocate it directly to its waiting requester:</p>
                       
                       {preemptionCandidates.length === 0 ? (
                         <div className="text-slate-500 font-mono text-xs italic py-4">No active preemption vectors candidate found on the current graph topology.</div>
@@ -876,14 +876,14 @@ const Simulator: React.FC = () => {
                             <button
                               key={idx}
                               onClick={() => handlePreemptResource(cand.rId, cand.ownerPid, cand.beneficiaryPid)}
-                              className="p-4 rounded-xl border border-accent/20 bg-accent/5 text-left transition-all hover:bg-accent/15 hover:border-accent group relative text-xs"
+                              className="p-4 rounded-xl border border-accent/20 bg-accent/[0.03] text-left transition-all hover:bg-accent/[0.08] hover:border-accent group relative text-xs"
                             >
                               <div className="flex items-center justify-between mb-2">
                                 <span className="text-[10px] font-bold text-accent uppercase tracking-wider leading-none">VEHICLE STRIP: {cand.rId}</span>
                                 <Zap className="w-3.5 h-3.5 text-accent group-hover:animate-bounce" />
                               </div>
-                              <p className="text-[#6a8099] font-mono text-[10.5px]">
-                                Reclaim <span className="text-white font-bold">{cand.rName}</span> from <span className="text-secondary font-bold">{cand.ownerPid}</span> and allocate immediately to <span className="text-primary font-bold">{cand.beneficiaryPid}</span>
+                              <p className="text-[#515154] font-mono text-[10.5px]">
+                                Reclaim <span className="text-[#1d1d1f] font-semibold">{cand.rName}</span> from <span className="text-secondary font-bold">{cand.ownerPid}</span> and allocate immediately to <span className="text-primary font-bold">{cand.beneficiaryPid}</span>
                               </p>
                             </button>
                           ))}
@@ -904,8 +904,8 @@ const Simulator: React.FC = () => {
                   <div className="flex items-center gap-4 text-success font-black text-sm uppercase tracking-[0.2rem]">
                     <CheckCircle2 className="w-5 h-5 text-success animate-bounce" /> CORE RECOVERY COMPLETED // GRID HEALTHY
                   </div>
-                  <h3 className="text-white text-3xl font-display font-black uppercase italic tracking-wider leading-none">GRID NOMINAL SECURED</h3>
-                  <p className="text-slate-400 text-xs leading-relaxed max-w-3xl">
+                  <h3 className="text-[#1d1d1f] text-3xl font-bold uppercase tracking-wider leading-none">GRID NOMINAL SECURED</h3>
+                  <p className="text-[#515154] text-xs leading-relaxed max-w-3xl">
                     Cascaded scheduler executed successfully. Remaining process threads finished calculations and freed all locked resource allocations. Grid lock is solved cleanly with zero active bottlenecks!
                   </p>
                   <div className="pt-2">
@@ -919,12 +919,12 @@ const Simulator: React.FC = () => {
               {!isDeadlocked && !isRecovering && !successCelebration && (
                 <motion.div 
                   initial={{ opacity: 1 }}
-                  className="glass-panel p-6 border-border-dim/20 bg-primary/[0.01]"
+                  className="glass-panel p-6 border-border-dim/20 bg-white shadow-sm"
                 >
-                  <div className="flex items-center gap-3 text-[#6a8099] text-[10px] uppercase font-bold tracking-widest leading-none mb-3">
+                  <div className="flex items-center gap-3 text-[#515154] text-[10px] uppercase font-bold tracking-widest leading-none mb-3">
                     <HelpCircle className="w-4 h-4 text-primary" /> OS GRID DIAGNOSTIC MONITOR
                   </div>
-                  <p className="text-slate-400 text-xs leading-relaxed">
+                  <p className="text-[#515154] text-xs leading-relaxed">
                     Select a localized grid failure sector from the selector panel on the right. Tap <strong className="text-primary hover:underline">"Run"</strong> to inject threads and active allocations. Watch the sub-cycle dependency resolve or enter a permanent circular wait lock, then utilize kernel protocol interventions.
                   </p>
                 </motion.div>
@@ -934,43 +934,43 @@ const Simulator: React.FC = () => {
 
           {/* Controls Panel */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="glass-panel p-8 space-y-8">
+            <div className="glass-panel p-8 space-y-8 bg-white shadow-sm">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20"><Settings2 className="w-5 h-5 text-primary" /></div>
                 <div>
-                  <h2 className="text-white font-bold text-sm tracking-tight">Dispatcher Terminal</h2>
-                  <p className="text-[#6a8099] text-[10px] font-bold uppercase tracking-widest">Unit 04 • Smart City Monitor</p>
+                  <h2 className="text-[#1d1d1f] font-bold text-sm tracking-tight">Dispatcher Terminal</h2>
+                  <p className="text-[#86868b] text-[10px] font-bold uppercase tracking-widest">Unit 04 • Smart City Monitor</p>
                 </div>
               </div>
 
               <div className="space-y-6 border-t border-border-dim/20 pt-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-[#6a8099] uppercase tracking-widest ml-1">Grid Scenario</label>
+                  <label className="text-[10px] font-bold text-[#86868b] uppercase tracking-widest ml-1">Grid Scenario</label>
                   <div className="relative group">
                     <select 
-                      className="w-full bg-[#0d1527] border border-border-dim rounded-xl py-3 px-4 text-xs font-bold text-white outline-none cursor-pointer hover:bg-primary/10 transition-all appearance-none"
+                      className="w-full bg-neutral-100 border border-border-dim/50 rounded-xl py-3 px-4 text-xs font-semibold text-[#1d1d1f] outline-none cursor-pointer hover:bg-neutral-200/80 transition-all appearance-none"
                       value={scenarioIdx}
                       onChange={(e) => { const val = parseInt(e.target.value); setScenarioIdx(val); reset(val); }}
                       disabled={isPlaying}
                     >
                       {SCENARIOS.map((s, i) => (
-                        <option key={i} value={i} className="bg-[#050a10] text-white">
+                        <option key={i} value={i} className="bg-white text-[#1d1d1f]">
                           {s.title}
                         </option>
                       ))}
                     </select>
-                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6a8099] pointer-events-none" />
+                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#86868b] pointer-events-none" />
                   </div>
-                  <div className="p-4 bg-primary/5 border border-border-dim/20 rounded-xl">
+                  <div className="p-4 bg-primary/[0.03] border border-border-dim/25 rounded-xl">
                     <div className="text-primary text-[10px] font-black uppercase mb-1">{scenario.subtitle}</div>
-                    <p className="text-[#6a8099] text-[11px] leading-normal">{scenario.desc}</p>
+                    <p className="text-[#515154] text-[11px] leading-normal">{scenario.desc}</p>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex justify-between items-end px-1">
-                    <label className="text-[10px] font-bold text-[#6a8099] uppercase tracking-widest">Diagnostic Speed</label>
-                    <span className="text-white font-mono text-xs">{speed}/3</span>
+                    <label className="text-[10px] font-bold text-[#86868b] uppercase tracking-widest">Diagnostic Speed</label>
+                    <span className="text-[#1d1d1f] font-mono text-xs">{speed}/3</span>
                   </div>
                   <input 
                     type="range" min="1" max="3" step="1" 
@@ -999,16 +999,24 @@ const Simulator: React.FC = () => {
             </div>
 
             {/* System Log */}
-            <div className="glass-panel p-6 bg-[#050a10]/50 h-[300px] flex flex-col">
+            <div className="glass-panel p-6 bg-white border border-border-dim/40 h-[300px] flex flex-col shadow-sm">
               <div className="flex items-center gap-2 mb-4">
                 <Terminal className="w-4 h-4 text-primary" />
-                <span className="text-[10px] uppercase font-bold tracking-widest text-[#6a8099]">Kernel Diagnostics</span>
+                <span className="text-[10px] uppercase font-bold tracking-widest text-[#515154]">Kernel Diagnostics</span>
               </div>
               <div className="flex-1 font-mono text-[11px] space-y-2 overflow-y-auto custom-scrollbar">
                 {logs.map((log, i) => (
                   <div key={i} className="flex gap-4">
-                    <span className="text-[#6a8099] opacity-30">[{log.time}]</span>
-                    <span className={log.type === 'error' ? 'text-secondary font-bold' : log.type === 'warning' ? 'text-[#ffcc44]' : 'text-success'}>
+                    <span className="text-neutral-400 font-medium">[{log.time}]</span>
+                    <span className={
+                      log.type === 'error' 
+                        ? 'text-secondary font-semibold' 
+                        : log.type === 'warning' 
+                        ? 'text-amber-600 font-semibold' 
+                        : log.type === 'info'
+                        ? 'text-blue-600 font-medium'
+                        : 'text-emerald-600 font-semibold'
+                    }>
                       {log.msg}
                     </span>
                   </div>
